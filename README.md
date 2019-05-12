@@ -22,7 +22,7 @@ Recommended:
 
 Foundation:
 ----------
-Suggested install via **npm**.  The main **less** file expects to find Foundation in:  
+Suggested install via **npm**.  The main **sass** file expects to find Foundation in:  
 `../../node_modules/foundation-sites/`.
 
 User/custom site styles go in: `css/_site.scss`, which is imported by: `css/foundation-main.scss`.  
