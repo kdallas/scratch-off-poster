@@ -1,0 +1,8 @@
+*-bak*
+.env
+.idea
+.vscode
+prepros-6.config
+assets/img.old
+js/soundbox*
+vendor

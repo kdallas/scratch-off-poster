@@ -1,0 +1,57 @@
+// import custom settings
+@import 'settings';
+
+// import foundation sass
+@import "../../node_modules/foundation-sites/scss/foundation";
+//@include foundation-everything; // Very important if you want to include ALL of foundation css to your complied css
+
+
+// OR include specific foundation components
+// Global styles
+@include foundation-global-styles;
+
+// Grids
+//@include foundation-grid;
+@include foundation-xy-grid-classes;
+//@include foundation-flex-grid;
+@include foundation-typography;
+
+// Generic components
+@include foundation-button;
+@include foundation-button-group;
+@include foundation-close-button;
+@include foundation-label;
+@include foundation-table;
+
+// Basic components
+@include foundation-callout;
+@include foundation-card;
+
+// Containers
+
+// Menu-based containers
+
+// Layout components
+@include foundation-sticky;
+@include foundation-title-bar;
+@include foundation-top-bar;
+
+// Helpers
+@include foundation-flex-classes;
+@include foundation-visibility-classes;
+
+
+.cards-100-gallery {  
+    @include breakpoint(small) {
+        @include xy-grid-layout(2, '.gallery-cell', true, 13);
+    }
+    @include breakpoint(medium) {
+        @include xy-grid-layout(5, '.gallery-cell', true, 13);
+    }
+    @include breakpoint(large) {
+        @include xy-grid-layout(10, '.gallery-cell', true, 13);
+    }
+}
+
+
+@import 'site';
