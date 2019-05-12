@@ -6,16 +6,16 @@ scratch-off-poster
 Requirements:
 ------------
 
-* Foundation 6 [ https://foundation.zurb.com/sites/docs/installation.html ]
+* [Foundation 6](https://foundation.zurb.com/sites/docs/installation.html)
 * PHP 5.6+ (tested on 7.x only), cURL extension
-* TMDB4PHP [ https://github.com/kdallas/TMDB4PHP ]
-* soundbox [ https://github.com/kdallas/soundbox ]
+* [TMDB4PHP](https://github.com/kdallas/TMDB4PHP)
+* [soundbox](https://github.com/kdallas/soundbox)
 
 ---
 
 Recommended:
 -----------
-* TMDB API Key - used with **TMDB4PHP**
+* [TMDB API](https://www.themoviedb.org/documentation/api) Key - used with **TMDB4PHP**
  
 ---
 
@@ -36,7 +36,7 @@ Import the project from GitHub (using composer or clone/checkout) and ensure it 
 Enter your API key into `MovieListSettings.php`, or configure your own `.env` if incorporating into a framework.
 
 Note that at this stage of development, the TMDB API isn't required if you import the provided database (`data/sample_data_import.sql`), and only want to display the existing records.
-The key is required if you want to query for new movie details or develop this out further with different movie (or TV show) lists.  I hacked together `update_details.php` for querying movie title & year, which will give you can idea of how to proceed.
+The key is required if you want to query for new movie details or develop this out further with different movie (or TV show) lists.  I hacked together `update_details.php` for querying movie title & year, which will give you an idea of how to proceed.
 
 soundbox:
 --------
