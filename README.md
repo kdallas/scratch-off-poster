@@ -10,7 +10,7 @@ Requirements:
 * [Foundation 6](https://foundation.zurb.com/sites/docs/installation.html)
 * PHP 5.6+ (tested on 7.x only), cURL extension
 * [TMDB4PHP](https://github.com/kdallas/TMDB4PHP)
-* [soundbox](https://github.com/kdallas/soundbox)
+* [soundbox](https://github.com/sbrl/soundbox)
 
 ---
 
