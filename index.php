@@ -77,10 +77,17 @@ if (isset($_POST["codeRequest"])) {
 		<div class="content-container">
 			<div class="grid-container full">
 				<div class="grid-x cards-100-top">
-					<div class="cell auto"><h4><small>How many can you scratch off?</small><span class="pipe">|</span> Your Code: <span class="userCode"><?php
-						echo '<input type="text" placeholder="Code" maxlength="4" value="'.$_SESSION['userCode'].'" data-code="'.$_SESSION['userCode'].'" />';
-					?></span><button type="button" class="button">Get New Code</button><img class="waiting" src="assets/img/wait30trans.gif" /></h4></div>
-					<div class="cell small-2"><h4><small><span class="watched"><?=count($movieList->watched)?></span> of <span class="total"><?=$movieList->total?></span></small></h4></div>
+                    <div class="cell small-12 medium-3 sub-title">
+                        <h4><small>How many can you scratch off?</small></h4>
+                    </div>
+                    <div class="cell small-8 medium-6 user-code">
+                        <h4>Your Code: <span class="userCode"><?php
+                            echo '<input type="text" placeholder="Code" maxlength="4" value="'.$_SESSION['userCode'].'" data-code="'.$_SESSION['userCode'].'" />';
+                        ?></span><button type="button" class="button">Get New Code</button><img class="waiting" src="assets/img/wait30trans.gif" /></h4>
+                    </div>
+                    <div class="cell small-4 medium-3 counter">
+                        <h4><small><span id="mute-btn" class="icon icon-volume-high" title="Mute"></span></small><span class="pipe">|</span> &nbsp;<small><span class="watched"><?=count($movieList->watched)?></span> of <span class="total"><?=$movieList->total?></span></small></h4>
+                    </div>
 				</div>
 				<div class="grid-x cards-100-gallery hide">
 					<?php

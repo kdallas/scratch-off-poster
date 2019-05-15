@@ -1,3 +1,8 @@
+var watchCount = null;
+var totalMovies = null;
+var sfxMuted = false;
+
+
 function panelSmarts(panel)
 {
     var imgPanel = panel.parentElement;
@@ -31,11 +36,12 @@ function panelSmarts(panel)
         var movieNo = imgPanel.getAttribute('data-no');
         var movieWatched = parseInt(imgPanel.getAttribute('data-watched'));
 
+        var statusIcon = null;
         if (movieWatched) {
-            var statusIcon = controlsArea.querySelector('.icon-checkmark2');
+            statusIcon = controlsArea.querySelector('.icon-checkmark2');
             statusIcon.setAttribute('title', scratchedStatusMsg);
         } else {
-            var statusIcon = controlsArea.querySelector('.icon-neutral');
+            statusIcon = controlsArea.querySelector('.icon-neutral');
             statusIcon.setAttribute('title', defaultStatusMsg);
         }
 
@@ -54,8 +60,7 @@ function panelSmarts(panel)
 
         panel.addEventListener("mousemove", function(e) {
             var brushPos = getBrushPos(e.clientX, e.clientY);
-            var leftBut = detectLeftButton(e);
-            if (leftBut == 1) {
+            if (detectLeftButton(e)) {
                 drawDot(brushPos.x, brushPos.y);
             }
         }, false);
@@ -75,7 +80,9 @@ function panelSmarts(panel)
 
         function scratchingStarted()
         {
-            soundbox.play("scratching", null, null, true);
+            if (!sfxMuted) {
+                soundbox.play("scratching", null, null, true);
+            }
             statusIcon.classList.remove('icon-neutral');
             statusIcon.classList.add('icon-baffled');
             statusIcon.setAttribute('title', scratchingStatusMsg);
@@ -133,11 +140,11 @@ function panelSmarts(panel)
         function updateUser(action)
         {
             ajaxPost(encodeURI('action=' + action + '&movieNo=' + movieNo), function(response) {
-                if (response == 'added') {
+                if (response === 'added') {
                     imgPanel.setAttribute('data-watched', '1');
                     movieWatched = 1;
                 }
-                else if (response == 'removed') {
+                else if (response === 'removed') {
                     imgPanel.setAttribute('data-watched', '0');
                     movieWatched = 0;
                 }
@@ -177,7 +184,9 @@ function panelSmarts(panel)
             window.soundbox.stop_all();
             panelCtx.clearRect(0, 0, panel.width, panel.height); // better than display:none, as we can re-use it
             panel.classList.add('hide'); // still need to hide the canvas to prevent the continued mousedown (scratching sound) and cursor
-            soundbox.play("pickup7a");
+            if (!sfxMuted) {
+                soundbox.play("pickup7a");
+            }
     
             fastForwardIcon.classList.add('hide');
             statusIcon.classList.remove('icon-baffled');
@@ -194,8 +203,10 @@ function panelSmarts(panel)
             panelCtx.restore();
             panelCtx.drawImage(img, 0, 0, panel.width, panel.height);
             panelCtx.save();
-            soundbox.play("pickup7b");
-    
+            if (!sfxMuted) {
+                soundbox.play("pickup7b");
+            }
+
             resetIcon.classList.add('hide');
             fastForwardIcon.classList.add('hide');
             statusIcon.classList.remove('icon-checkmark2','icon-baffled');
@@ -220,12 +231,9 @@ function panelSmarts(panel)
                 }
             }, 1500);
         }
-    };
+    }
 }
 
-
-var watchCount = null;
-var totalMovies = null;
 
 function updateTop(ticked)
 {
@@ -241,7 +249,7 @@ function ajaxPost(request, cb)
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
     xhr.onload = function() {
-        if (xhr.status === 200 && xhr.responseText == 'failed') {
+        if (xhr.status === 200 && xhr.responseText === 'failed') {
             alert('Something went wrong.  Response was: ' + xhr.responseText);
         }
         else if (xhr.status !== 200) {
@@ -261,23 +269,50 @@ function ajaxPost(request, cb)
     watchCount = gridTop.querySelector('.watched');
     totalMovies = gridTop.querySelector('.total');
 
+    var waitAnim = gridTop.querySelector('.waiting');
     var codeInput = gridTop.querySelector('.userCode > input');
+    var codeButton = gridTop.querySelector('.button');
+    var muteButton = gridTop.querySelector('#mute-btn');
+
     codeInput.addEventListener("keyup", function(e) {
         if (e.key === "Enter") {
+            waitAnim.classList.remove('hide');
+            codeButton.classList.add('hide');
+
             var oldCode = codeInput.getAttribute('data-code');
             ajaxPost(encodeURI('codeInput=' + codeInput.value), function(response) {
                 if (response !== oldCode.toUpperCase()) {
                     document.location.reload(true);
+                } else {
+                    codeButton.classList.remove('hide');
+                    waitAnim.classList.add('hide');
+                    codeInput.value = oldCode;
                 }
             });
         }
     });
 
-    var codeButton = gridTop.querySelector('.button');
-    codeButton.addEventListener("click", function(e) {
-        ajaxPost(encodeURI('codeRequest=1'), function(response) {
+    codeButton.addEventListener("click", function() {
+        waitAnim.classList.remove('hide');
+        codeButton.classList.add('hide');
+        ajaxPost(encodeURI('codeRequest=1'), function() {
             document.location.reload(true);
         });
+    });
+
+    muteButton.addEventListener("click", function() {
+        if (muteButton.classList.contains('icon-volume-high')) {
+            window.soundbox.stop_all();
+            sfxMuted = true;
+            muteButton.classList.remove('icon-volume-high');
+            muteButton.classList.add('icon-volume-mute2');
+            muteButton.title = 'Unmute';
+        } else {
+            sfxMuted = false;
+            muteButton.classList.remove('icon-volume-mute2');
+            muteButton.classList.add('icon-volume-high');
+            muteButton.title = 'Mute';
+        }
     });
 
     var gridBody = document.querySelector('.cards-100-gallery');
@@ -286,14 +321,13 @@ function ajaxPost(request, cb)
         panelSmarts(panel);
     });
 
-    window.addEventListener("load", function(event) {
+    window.addEventListener("load", function() {
         window.soundbox = new SoundBox();
         soundbox.load('scratching', '/100-movies/assets/sound/Scratching-Paper.mp3');
         soundbox.load('pickup7a',   '/100-movies/assets/sound/Pickup_Coin7a.mp3');
         soundbox.load('pickup7b',   '/100-movies/assets/sound/Pickup_Coin7b.mp3');
 
         gridBody.classList.remove('hide');
-        var waitAnim = gridTop.querySelector('.waiting');
         waitAnim.classList.add('hide');
     });
 })();
