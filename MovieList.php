@@ -166,7 +166,10 @@ class MovieList {
 			$this->watched = $newWatched;
 		}
 
-		sort($this->watched);
+		if (count($this->watched) > 1) {
+			sort($this->watched);
+			$this->watched = array_keys(array_flip($this->watched)); // ensure uniqueness and integers will be saved as integers
+		}
 
 		if ($userExists) {
 			$result = $this->dbConn->query("UPDATE `users` SET `watched_list`='" . json_encode($this->watched) . "' WHERE (`userID`=$userID)");
