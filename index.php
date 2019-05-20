@@ -83,7 +83,7 @@ if (isset($_POST["codeRequest"])) {
                     <div class="cell small-8 medium-6 user-code">
                         <h4>Your Code: <span class="userCode"><?php
                             echo '<input type="text" placeholder="Code" maxlength="4" value="'.$_SESSION['userCode'].'" data-code="'.$_SESSION['userCode'].'" />';
-                        ?></span><button type="button" class="button">Get New Code</button><img class="waiting" src="assets/img/wait30trans.gif" /></h4>
+                        ?></span><button type="button" class="button">Get New Code</button><span class="waiting"></span></h4>
                     </div>
                     <div class="cell small-4 medium-3 counter">
                         <h4><small><span id="mute-btn" class="icon icon-volume-high" title="Mute"></span></small><span class="pipe">|</span> &nbsp;<small><span class="watched"><?=count($movieList->watched)?></span> of <span class="total"><?=$movieList->total?></span></small></h4>
