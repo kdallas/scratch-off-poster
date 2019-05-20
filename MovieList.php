@@ -4,17 +4,16 @@ include('MovieListSettings.php');
 
 class MovieList {
 
-    private $dbSrv = DB_SERVER;
-    private $dbName = DB_NAME;
-    private $dbUser = DB_USER;
-    private $dbPass = DB_PASSWORD;
-
+	private $dbSrv = DB_SERVER;
+	private $dbName = DB_NAME;
+	private $dbUser = DB_USER;
+	private $dbPass = DB_PASSWORD;
 	private $dbConn = null;
+
 	public  $watched = [];
 	public  $movieList = [];
 	public  $movieDBrecs = [];
 	public  $total = 0;
-
 
 	public function __construct()
 	{
@@ -93,6 +92,58 @@ class MovieList {
 		$this->total = $total;
 	}
 
+	private function getUserID()
+	{
+		if (isset($_SESSION['userCode'])) {
+			$userID = hexdec($_SESSION['userCode']);
+			if (!isset($_COOKIE['userCode']) || $_COOKIE['userCode']!=$_SESSION['userCode']) {
+				// set the _COOKIE only
+				$this->setUserCode($userID, false);
+			}
+		} elseif (isset($_COOKIE['userCode'])) {
+			$_SESSION['userCode'] = $_COOKIE['userCode'];
+			$userID = hexdec($_SESSION['userCode']);
+		} else {
+			// if we don't have a userCode set yet, grab a generated one excluding those we've already saved before
+			$userID = $this->generateUserID();
+
+			// set the _SESSION and _COOKIE
+			$this->setUserCode($userID);
+		}
+
+		return $userID;
+	}
+
+	private function setUserCode($userID, $setSession=true)
+	{
+		if ($setSession) {
+			$_SESSION['userCode'] = self::userID2Code($userID);
+		}
+
+		setcookie(
+			"userCode",
+			$_SESSION['userCode'],
+			time() + (365 * 24 * 60 * 60) // 1 year
+		);
+	}
+
+	private function checkUserExists($userID)
+	{
+		$result = $this->dbConn->query("SELECT userID FROM users WHERE userID = $userID LIMIT 1");
+		if ($result->num_rows) {
+			if ($row = $result->fetch_assoc()) {
+				return $row["userID"];
+			}
+		}
+
+		return 0;
+	}
+
+	public static function userID2Code($userID)
+	{
+		return strtoupper(dechex($userID));
+	}
+
 	public function updateWatchList(&$post)
 	{
 		$userID = $this->getUserID();
@@ -145,32 +196,6 @@ class MovieList {
 		return $result;
 	}
 
-	private function getUserID()
-	{
-		if (isset($_SESSION['userCode'])) {
-			$userID = hexdec($_SESSION['userCode']);
-		} else {
-			// if we don't have a userCode set yet, grab a generated one excluding those we've already saved before
-			$userID = $this->generateUserID();
-			$_SESSION['userCode'] = strtoupper(dechex($userID));
-			// Note: don't update the database until something is saved
-		}
-
-		return $userID;
-	}
-
-	private function checkUserExists($userID)
-	{
-		$result = $this->dbConn->query("SELECT userID FROM users WHERE userID = $userID LIMIT 1");
-		if ($result->num_rows) {
-			if ($row = $result->fetch_assoc()) {
-				return $row["userID"];
-			}
-		}
-
-		return 0;
-	}
-
 	public function generateUserID()
 	{
 		$excludeIDs = [];
@@ -190,7 +215,8 @@ class MovieList {
 	public function loadUserCode($userCode)
 	{
 		if ($userID = $this->checkUserExists(hexdec($userCode))) {
-			$_SESSION['userCode'] = strtoupper(dechex($userID));
+			// set the _SESSION and _COOKIE
+			$this->setUserCode($userID);
 		}
 
 		echo $_SESSION['userCode'];
