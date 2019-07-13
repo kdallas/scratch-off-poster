@@ -263,6 +263,29 @@ function ajaxPost(request, cb)
     xhr.send(request);
 }
 
+function switchTab(tab_id, tab_content)
+{
+    // first of all we get all tab content blocks (I think the best way to get them by class names)
+    var elems = document.getElementsByClassName("tabcontent");
+    var i;
+    for (i = 0; i < elems.length; i++) {
+        elems[i].style.display = 'none'; // hide all tab content
+    }
+    document.getElementById(tab_content).style.display = 'block'; // display the content of the tab we need
+
+    // now we get all tab menu items by class names (use the next code only if you need to highlight current tab)
+    elems = document.getElementsByClassName("tabmenu");
+
+    for (i = 0; i < elems.length; i++) {
+        //elems[i].className = 'tabmenu';
+        elems[i].removeAttribute('aria-selected');
+    }
+
+    var activeTab = document.getElementById(tab_id);
+    //activeTab.className = 'tabmenu active';
+    activeTab.setAttribute('aria-selected', true);
+}
+
 
 (function() {
     var gridTop = document.querySelector('.cards-100-top');
@@ -319,6 +342,13 @@ function ajaxPost(request, cb)
     var panels = gridBody.querySelectorAll('canvas');
     panels.forEach(function(panel){
         panelSmarts(panel);
+    });
+
+    var tabLinks = document.querySelectorAll('.tabmenu');
+    tabLinks.forEach(function(tab){
+        tab.addEventListener("click", function() {
+            switchTab(this.getAttribute('id'), this.getAttribute('data-id'));
+        });
     });
 
     window.addEventListener("load", function() {
