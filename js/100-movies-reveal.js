@@ -259,6 +259,15 @@ var ajaxPost = function(request, cb)
 
 function switchTab(tab_id, tab_content)
 {
+    if (!sfxMuted) {
+        var sounds = [
+            'comp11',
+            'comp12'
+        ];
+        var soundNo = Math.floor(Math.random()*sounds.length);
+        soundbox.play(sounds[soundNo]);
+    }
+
     var elems = document.getElementsByClassName("tabcontent");
     var i;
     for (i = 0; i < elems.length; i++) {
@@ -347,6 +356,8 @@ function switchTab(tab_id, tab_content)
         soundbox.load('scratching', '/100-movies/assets/sound/Scratching-Paper.mp3');
         soundbox.load('pickup7a',   '/100-movies/assets/sound/Pickup_Coin7a.mp3');
         soundbox.load('pickup7b',   '/100-movies/assets/sound/Pickup_Coin7b.mp3');
+        soundbox.load('comp11',     '/100-movies/assets/sound/STcomp011.wav');
+        soundbox.load('comp12',     '/100-movies/assets/sound/STcomp012.wav');
 
         gridTops.forEach(function(gridTop){
             var gridBody = gridTop.nextElementSibling; // .cards-100-gallery
