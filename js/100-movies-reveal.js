@@ -259,7 +259,7 @@ var ajaxPost = function(request, cb)
     xhr.send(request);
 };
 
-function switchTab(tab_id, tab_content)
+var playBtnSfx = function()
 {
     if (!sfxMuted) {
         var sounds = [
@@ -269,6 +269,11 @@ function switchTab(tab_id, tab_content)
         var soundNo = Math.floor(Math.random()*sounds.length);
         soundbox.play(sounds[soundNo]);
     }
+};
+
+function switchTab(tab_id, tab_content)
+{
+    playBtnSfx();
 
     var elems = document.getElementsByClassName("tabcontent");
     var i;
@@ -317,6 +322,7 @@ function switchTab(tab_id, tab_content)
         });
 
         codeButton.addEventListener("click", function() {
+            playBtnSfx();
             waitAnim.classList.remove('hide');
             codeButton.classList.add('hide');
             ajaxPost(encodeURI('codeRequest=1&listID=' + gridBody.dataset.id), function() {
