@@ -10,12 +10,15 @@ class MovieList {
 	private $dbPass = DB_PASSWORD;
 	private $dbConn = null;
 
+	private $listID = 0;
+
 	public  $watched = [];
 	public  $movieList = [];
 	public  $movieDBrecs = [];
 	public  $total = 0;
+	public  $lists = [];
 
-	public function __construct()
+	public function __construct($listID = 1)
 	{
 		$this->dbConn = new mysqli($this->dbSrv, $this->dbUser, $this->dbPass, $this->dbName);
 		$this->dbConn->set_charset("UTF8");
@@ -24,8 +27,7 @@ class MovieList {
 			die("Connection failed: " . $this->dbConn->connect_error);
 		}
 
-		$this->getDBrecs();
-		$this->loadPageData();
+		$this->loadListByID($listID);
 	}
 
 	public function __destruct()
@@ -35,8 +37,16 @@ class MovieList {
 
 	private function getDBrecs()
 	{
-		$result = $this->dbConn->query("SELECT * FROM movie_list");
+		$result = $this->dbConn->query("
+			SELECT movie_list.*
+			FROM list_links, movie_list
+			WHERE list_links.list_id = {$this->listID}
+			AND movie_list.id = list_links.movie_id
+			ORDER BY CAST((`no` * 10) AS UNSIGNED)
+		");
+
 		if ($total = $result->num_rows) {
+			$this->movieDBrecs = [];
 			while($row = $result->fetch_assoc()) {
 				$this->movieDBrecs[] = $row;
 			}
@@ -94,15 +104,39 @@ class MovieList {
 
 	private function getUserID()
 	{
-		if (isset($_SESSION['userCode'])) {
-			$userID = hexdec($_SESSION['userCode']);
-			if (!isset($_COOKIE['userCode']) || $_COOKIE['userCode']!=$_SESSION['userCode']) {
-				// set the _COOKIE only
+		if (isset($_SESSION['movieLists'][$this->listID])) {
+			$userID = hexdec($_SESSION['movieLists'][$this->listID]['userCode']);
+			// check the cookie has been set
+			if (!isset($_COOKIE['movieLists'])) {
 				$this->setUserCode($userID, false);
+			} else {
+				// still need to check if the userID for this list has been set
+				$cookieIsSet = true;
+				foreach (json_decode($_COOKIE['movieLists']) as $cKey=>$cVal) {
+					if ($cKey == $this->listID && $_SESSION['movieLists'][$this->listID]['userCode'] != $cVal->userCode) {
+						$cookieIsSet = false;
+					}
+				}
+
+				if (!$cookieIsSet) {
+					$this->setUserCode($userID, false);
+				}
 			}
-		} elseif (isset($_COOKIE['userCode'])) {
-			$_SESSION['userCode'] = $_COOKIE['userCode'];
-			$userID = hexdec($_SESSION['userCode']);
+		} elseif (isset($_COOKIE['movieLists'])) {
+			$sessionSet = false;
+			foreach (json_decode($_COOKIE['movieLists']) as $cKey=>$cVal) {
+				if ($cKey == $this->listID) {
+					$_SESSION['movieLists'][$this->listID] = ['userCode'=>$cVal->userCode];
+					$sessionSet = true;
+				}
+			}
+
+			if ($sessionSet) {
+				$userID = hexdec($_SESSION['movieLists'][$this->listID]['userCode']);
+			} else {
+				$userID = $this->generateUserID();
+				$this->setUserCode($userID);
+			}
 		} else {
 			// if we don't have a userCode set yet, grab a generated one excluding those we've already saved before
 			$userID = $this->generateUserID();
@@ -117,14 +151,17 @@ class MovieList {
 	private function setUserCode($userID, $setSession=true)
 	{
 		if ($setSession) {
-			$_SESSION['userCode'] = self::userID2Code($userID);
+			$_SESSION['movieLists'][$this->listID] = ['userCode'=>self::userID2Code($userID)];
 		}
 
+		// need to change this to only run once on page load (i.e. for ALL lists, not one at a time)
+		/*
 		setcookie(
-			"userCode",
-			$_SESSION['userCode'],
+			"movieLists",
+			json_encode($_SESSION['movieLists']),
 			time() + (365 * 24 * 60 * 60) // 1 year
 		);
+		*/
 	}
 
 	private function checkUserExists($userID)
@@ -174,7 +211,7 @@ class MovieList {
 		if ($userExists) {
 			$result = $this->dbConn->query("UPDATE `users` SET `watched_list`='" . json_encode($this->watched) . "' WHERE (`userID`=$userID)");
 		} else {
-			$result = $this->dbConn->query("INSERT INTO `users` (`id`, `userID`, `watched_list`) VALUES (NULL, '$userID', '" . json_encode($this->watched) . "')");
+			$result = $this->dbConn->query("INSERT INTO `users` (`id`, `userID`, `list_id`, `watched_list`) VALUES (NULL, '$userID', ".$post["listID"].", '" . json_encode($this->watched) . "')");
 		}
 
 		if ($result === TRUE) {
@@ -215,6 +252,34 @@ class MovieList {
 		return $userID;
 	}
 
+	public function loadListByID($listID)
+	{
+		$this->setListID($listID);
+		$this->getDBrecs();
+		$this->loadPageData();
+	}
+
+	public function setListID($listID)
+	{
+		$this->listID = $listID;
+	}
+
+	public function loadLists()
+	{
+		if (!isset($_SESSION['activeMovieListID'])) {
+			$_SESSION['activeMovieListID'] = 1;
+		}
+
+		$result = $this->dbConn->query("SELECT * FROM lists");
+		if ($result->num_rows) {
+			while($row = $result->fetch_assoc()) {
+				$row["selected"] = ($row["id"] == $_SESSION['activeMovieListID']);
+				$this->lists[] = $row;
+			}
+		}
+		unset($result);
+	}
+
 	public function loadUserCode($userCode)
 	{
 		if ($userID = $this->checkUserExists(hexdec($userCode))) {
@@ -222,7 +287,7 @@ class MovieList {
 			$this->setUserCode($userID);
 		}
 
-		echo $_SESSION['userCode'];
+		echo $_SESSION['movieLists'][$this->listID]['userCode'];
 	}
 
 	public function displayCardInner($itemNos, $data)
