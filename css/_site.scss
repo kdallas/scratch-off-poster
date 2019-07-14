@@ -7,6 +7,21 @@ body {
 .master-container {
     padding: 0 10px;
 
+    .tabs {
+        .header-controls {
+            float: right;
+            margin-right: 10px;
+            #mute-btn {
+                color: #1779ba;
+                transition: color 0.25s ease-out;
+                cursor: pointer;
+                &:hover {
+                    color: #14679e;
+                }
+            }
+        }
+    }
+
     .content-container {
         padding: 5px;
         background-color: #fff;
@@ -46,6 +61,7 @@ body {
         }
 
         .introduction {
+            padding: 0 0.40625rem;
             p {
                 margin: 0;
                 .icon-forward2 {
@@ -75,14 +91,6 @@ body {
                             color: #aaa;
                             .watched, .total {
                                 color: green;
-                            }
-                            .icon {
-                                color: #1779ba;
-                                transition: color 0.25s ease-out;
-                                cursor: pointer;
-                                &:hover {
-                                    color: #14679e;
-                                }
                             }
                         }
                     }
