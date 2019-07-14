@@ -250,7 +250,9 @@ var ajaxPost = function(request, cb)
             alert('Request failed.  Returned status of: ' + xhr.status);
         }
         else {
-            cb(xhr.responseText);
+            if (typeof cb !== 'undefined') {
+                cb(xhr.responseText);
+            }
         }
     };
 
