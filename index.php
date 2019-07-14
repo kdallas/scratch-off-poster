@@ -46,6 +46,11 @@ if (isset($_POST["activeListID"])) {
 	die();
 }
 
+if (isset($_POST["muteSfx"])) {
+	$_SESSION['sfxMuted'] = ($_POST["muteSfx"]);
+	die();
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -66,7 +71,7 @@ if (isset($_POST["activeListID"])) {
             </li>
         <?php endforeach; ?>
             <li class="header-controls">
-                <h4><small><span id="mute-btn" class="icon icon-volume-high" title="Mute"></span></small></h4>
+                <h4><small><span id="mute-btn" class="icon icon-volume-<?=($_SESSION['sfxMuted'] ? 'mute2" title="Unm' : 'high" title="M')?>ute"></span></small></h4>
             </li>
         </ul>
 

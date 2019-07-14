@@ -344,19 +344,25 @@ function switchTab(tab_id, tab_content)
     });
 
     var muteButton = document.getElementById('mute-btn');
+    if (muteButton.classList.contains('icon-volume-mute2')) {
+        sfxMuted = true;
+    }
+
     muteButton.addEventListener("click", function() {
         if (muteButton.classList.contains('icon-volume-high')) {
             window.soundbox.stop_all();
-            sfxMuted = true;
+            sfxMuted = 1;
             muteButton.classList.remove('icon-volume-high');
             muteButton.classList.add('icon-volume-mute2');
             muteButton.title = 'Unmute';
         } else {
-            sfxMuted = false;
+            sfxMuted = 0;
+            playBtnSfx();
             muteButton.classList.remove('icon-volume-mute2');
             muteButton.classList.add('icon-volume-high');
             muteButton.title = 'Mute';
         }
+        ajaxPost(encodeURI('muteSfx=' + sfxMuted));
     });
 
     window.addEventListener("load", function() {

@@ -279,6 +279,10 @@ class MovieList {
 			$_SESSION['activeMovieListID'] = 1;
 		}
 
+		if (!isset($_SESSION['sfxMuted'])) {
+			$_SESSION['sfxMuted'] = false;
+		}
+
 		$result = $this->dbConn->query("SELECT * FROM lists");
 		if ($result->num_rows) {
 			while($row = $result->fetch_assoc()) {
