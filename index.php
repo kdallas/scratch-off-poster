@@ -119,7 +119,7 @@ if (isset($_POST["activeListID"])) {
                                 </h4>
                             </div>
                         </div>
-                        <div class="grid-x cards-100-gallery hide" data-id="2">
+                        <div class="grid-x cards-100-gallery hide" data-id="<?=$listRow["id"]?>">
 							<?php
 							foreach ($movieList->movieList as $item) {
 								echo '<div class="gallery-cell">';

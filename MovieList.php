@@ -38,11 +38,20 @@ class MovieList {
 	private function getDBrecs()
 	{
 		$result = $this->dbConn->query("
-			SELECT movie_list.*
+			SELECT
+		--		movie_list.*
+				list_links.pos_no AS `no`,
+				movie_list.title,
+				movie_list.poster_path,
+				movie_list.tmdb_id,
+				movie_list.imdb_id,
+				movie_list.release_date,
+				movie_list.split
 			FROM list_links, movie_list
 			WHERE list_links.list_id = {$this->listID}
 			AND movie_list.id = list_links.movie_id
-			ORDER BY CAST((`no` * 10) AS UNSIGNED)
+		--	ORDER BY CAST((`no` * 10) AS UNSIGNED)
+			ORDER BY CAST((`pos_no` * 10) AS UNSIGNED)
 		");
 
 		if ($total = $result->num_rows) {
