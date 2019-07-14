@@ -1,9 +1,6 @@
-var watchCount = null;
-var totalMovies = null;
 var sfxMuted = false;
 
-
-function panelSmarts(panel)
+function panelSmarts(panel, listID)
 {
     var imgPanel = panel.parentElement;
     var img = new Image();
@@ -139,7 +136,7 @@ function panelSmarts(panel)
 
         function updateUser(action)
         {
-            ajaxPost(encodeURI('action=' + action + '&movieNo=' + movieNo), function(response) {
+            ajaxPost(encodeURI('action=' + action + '&listID=' + listID + '&movieNo=' + movieNo), function(response) {
                 if (response === 'added') {
                     imgPanel.setAttribute('data-watched', '1');
                     movieWatched = 1;
@@ -148,7 +145,10 @@ function panelSmarts(panel)
                     imgPanel.setAttribute('data-watched', '0');
                     movieWatched = 0;
                 }
-                updateTop(movieWatched);
+
+                var watchCount = panel.closest('.grid-container.full').querySelector('.watched');
+                var no = parseInt(watchCount.textContent);
+                watchCount.textContent = movieWatched ? (no+1) : (no-1);
             });
         }
 
@@ -234,14 +234,8 @@ function panelSmarts(panel)
     }
 }
 
-
-function updateTop(ticked)
-{
-    var no = parseInt(watchCount.textContent);
-    watchCount.textContent = ticked ? (no+1) : (no-1);
-}
-
-function ajaxPost(request, cb)
+//function ajaxPost(request, cb)
+var ajaxPost = function(request, cb)
 {
     var xhr = new XMLHttpRequest();
 
@@ -261,68 +255,78 @@ function ajaxPost(request, cb)
     };
 
     xhr.send(request);
-}
+};
 
 function switchTab(tab_id, tab_content)
 {
-    // first of all we get all tab content blocks (I think the best way to get them by class names)
     var elems = document.getElementsByClassName("tabcontent");
     var i;
     for (i = 0; i < elems.length; i++) {
-        elems[i].style.display = 'none'; // hide all tab content
+        elems[i].style.display = 'none';
     }
-    document.getElementById(tab_content).style.display = 'block'; // display the content of the tab we need
+    document.getElementById(tab_content).style.display = 'block';
 
-    // now we get all tab menu items by class names (use the next code only if you need to highlight current tab)
     elems = document.getElementsByClassName("tabmenu");
-
     for (i = 0; i < elems.length; i++) {
-        //elems[i].className = 'tabmenu';
         elems[i].removeAttribute('aria-selected');
     }
 
     var activeTab = document.getElementById(tab_id);
-    //activeTab.className = 'tabmenu active';
     activeTab.setAttribute('aria-selected', true);
+    ajaxPost(encodeURI('activeListID=' + activeTab.dataset.list_id));
 }
 
 
 (function() {
-    var gridTop = document.querySelector('.cards-100-top');
-    watchCount = gridTop.querySelector('.watched');
-    totalMovies = gridTop.querySelector('.total');
+    var gridTops = document.querySelectorAll('.cards-100-top');
 
-    var waitAnim = gridTop.querySelector('.waiting');
-    var codeInput = gridTop.querySelector('.userCode > input');
-    var codeButton = gridTop.querySelector('.button');
-    var muteButton = gridTop.querySelector('#mute-btn');
+    gridTops.forEach(function(gridTop){
+        var gridBody = gridTop.nextElementSibling; // .cards-100-gallery
 
-    codeInput.addEventListener("keyup", function(e) {
-        if (e.key === "Enter") {
+        var waitAnim = gridTop.querySelector('.waiting');
+        var codeInput = gridTop.querySelector('.userCode > input');
+        var codeButton = gridTop.querySelector('.button');
+
+        codeInput.addEventListener("keyup", function(e) {
+            if (e.key === "Enter") {
+                waitAnim.classList.remove('hide');
+                codeButton.classList.add('hide');
+
+                var oldCode = codeInput.getAttribute('data-code');
+                ajaxPost(encodeURI('codeInput=' + codeInput.value + '&listID=' + gridBody.dataset.id), function(response) {
+                    if (response !== oldCode.toUpperCase()) {
+                        document.location.reload(true);
+                    } else {
+                        codeButton.classList.remove('hide');
+                        waitAnim.classList.add('hide');
+                        codeInput.value = oldCode;
+                    }
+                });
+            }
+        });
+
+        codeButton.addEventListener("click", function() {
             waitAnim.classList.remove('hide');
             codeButton.classList.add('hide');
-
-            var oldCode = codeInput.getAttribute('data-code');
-            ajaxPost(encodeURI('codeInput=' + codeInput.value), function(response) {
-                if (response !== oldCode.toUpperCase()) {
-                    document.location.reload(true);
-                } else {
-                    codeButton.classList.remove('hide');
-                    waitAnim.classList.add('hide');
-                    codeInput.value = oldCode;
-                }
+            ajaxPost(encodeURI('codeRequest=1&listID=' + gridBody.dataset.id), function() {
+                document.location.reload(true);
             });
-        }
-    });
+        });
 
-    codeButton.addEventListener("click", function() {
-        waitAnim.classList.remove('hide');
-        codeButton.classList.add('hide');
-        ajaxPost(encodeURI('codeRequest=1'), function() {
-            document.location.reload(true);
+        var panels = gridBody.querySelectorAll('canvas');
+        panels.forEach(function(panel){
+            panelSmarts(panel, gridBody.dataset.id);
         });
     });
 
+    var tabLinks = document.querySelectorAll('.tabmenu');
+    tabLinks.forEach(function(tab){
+        tab.addEventListener("click", function() {
+            switchTab(this.getAttribute('id'), this.getAttribute('data-id'));
+        });
+    });
+
+    var muteButton = document.getElementById('mute-btn');
     muteButton.addEventListener("click", function() {
         if (muteButton.classList.contains('icon-volume-high')) {
             window.soundbox.stop_all();
@@ -338,26 +342,18 @@ function switchTab(tab_id, tab_content)
         }
     });
 
-    var gridBody = document.querySelector('.cards-100-gallery');
-    var panels = gridBody.querySelectorAll('canvas');
-    panels.forEach(function(panel){
-        panelSmarts(panel);
-    });
-
-    var tabLinks = document.querySelectorAll('.tabmenu');
-    tabLinks.forEach(function(tab){
-        tab.addEventListener("click", function() {
-            switchTab(this.getAttribute('id'), this.getAttribute('data-id'));
-        });
-    });
-
     window.addEventListener("load", function() {
         window.soundbox = new SoundBox();
         soundbox.load('scratching', '/100-movies/assets/sound/Scratching-Paper.mp3');
         soundbox.load('pickup7a',   '/100-movies/assets/sound/Pickup_Coin7a.mp3');
         soundbox.load('pickup7b',   '/100-movies/assets/sound/Pickup_Coin7b.mp3');
 
-        gridBody.classList.remove('hide');
-        waitAnim.classList.add('hide');
+        gridTops.forEach(function(gridTop){
+            var gridBody = gridTop.nextElementSibling; // .cards-100-gallery
+            gridBody.classList.remove('hide');
+
+            var waitAnim = gridTop.querySelector('.waiting');
+            waitAnim.classList.add('hide');
+        });
     });
 })();
