@@ -340,6 +340,7 @@ function switchTab(tab_id, tab_content)
     tabLinks.forEach(function(tab){
         tab.addEventListener("click", function() {
             switchTab(this.getAttribute('id'), this.getAttribute('data-id'));
+            document.getElementById('foot-criteria').textContent = this.getAttribute('data-foot_criteria');
         });
     });
 

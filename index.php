@@ -24,6 +24,7 @@ if (isset($_POST["action"], $_POST["movieNo"])) {
 } else {
 	$movieList = new MovieList();
 	$movieList->loadLists();
+	$footerMsg = '';
 }
 
 if (isset($_POST["codeInput"])) {
@@ -67,7 +68,7 @@ if (isset($_POST["muteSfx"])) {
         <ul class="tabs">
         <?php foreach ($movieList->lists as $listRow): ?>
             <li class="tabs-title">
-                <a href="javascript:" id="tb_<?=$listRow["tabLabel"]?>" data-id="content_<?=$listRow["tabLabel"]?>" data-list_id="<?=$listRow["id"]?>" class="tabmenu"<?=($listRow["selected"] ? ' aria-selected="true"' :'')?>><?=$listRow["listName"]?></a>
+                <a href="javascript:" id="tb_<?=$listRow["tabLabel"]?>" data-id="content_<?=$listRow["tabLabel"]?>" data-list_id="<?=$listRow["id"]?>" data-foot_criteria="<?=$listRow["listCriteria"]?>" class="tabmenu"<?=($listRow["selected"] ? ' aria-selected="true"' :'')?>><?=$listRow["listName"]?></a>
             </li>
         <?php endforeach; ?>
             <li class="header-controls">
@@ -78,8 +79,11 @@ if (isset($_POST["muteSfx"])) {
 		<?php foreach ($movieList->lists as $listRow): ?>
             <div id="content_<?=$listRow["tabLabel"]?>" class="tabcontent" <?=(!$listRow["selected"] ? ' style="display:none;"' : '')?>>
 				<?php
+                    if ($listRow["selected"]) {
+						$footerMsg = $listRow["listCriteria"];
+                    }
                     if ($listRow["id"]>1) {
-                        $movieList->loadListByID(2);
+                        $movieList->loadListByID($listRow["id"]);
                     }
 				?>
                 <div class="content-container">
@@ -154,7 +158,7 @@ if (isset($_POST["muteSfx"])) {
 
 		<div class="content-container">
 			<div class="grid-x grid-padding-x align-justify">
-				<div class="cell small-4">Taxidermy farm-to-table ethical distillery 8-bit venmo.</div>
+				<div class="cell small-4" id="foot-criteria"><?=$footerMsg?></div>
 				<div class="cell small-4 text-right">
 					<div class="themoviedb-logo"></div>
 				</div>
