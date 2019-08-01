@@ -158,7 +158,7 @@ if (isset($_POST["muteSfx"])) {
 
 		<div class="content-container">
 			<div class="grid-x grid-padding-x align-justify">
-				<div class="cell small-4" id="foot-criteria"><?=$footerMsg?></div>
+				<div class="cell small-8" id="foot-criteria"><?=$footerMsg?></div>
 				<div class="cell small-4 text-right">
 					<div class="themoviedb-logo"></div>
 				</div>
