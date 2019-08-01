@@ -39,18 +39,16 @@ class MovieList {
 	{
 		$result = $this->dbConn->query("
 			SELECT
-		--		movie_list.*
 				list_links.pos_no AS `no`,
 				movie_list.title,
 				movie_list.poster_path,
 				movie_list.tmdb_id,
 				movie_list.imdb_id,
 				movie_list.release_date,
-				movie_list.split
+				list_links.split
 			FROM list_links, movie_list
 			WHERE list_links.list_id = {$this->listID}
 			AND movie_list.id = list_links.movie_id
-		--	ORDER BY CAST((`no` * 10) AS UNSIGNED)
 			ORDER BY CAST((`pos_no` * 10) AS UNSIGNED)
 		");
 
@@ -242,6 +240,57 @@ class MovieList {
 		$sql = "UPDATE `movie_list` SET " . join(', ', $fields) . " WHERE (`id`='$id')";
 		$result = $this->dbConn->query($sql);
 
+		return $result;
+	}
+
+	private function prepareInsert($table, $record)
+	{
+		$columns = implode("`, `", array_keys($record));
+		$escaped_values = array_map('addslashes', array_values($record));
+		$values  = implode("', '", $escaped_values);
+		return "INSERT INTO `$table` (`$columns`) VALUES ('$values')";
+	}
+
+	public function getMovieRec($tmdb_id)
+	{
+		$row = [];
+		$result = $this->dbConn->query("SELECT * FROM `movie_list` WHERE tmdb_id = $tmdb_id LIMIT 1");
+		if ($result->num_rows) {
+			$row = $result->fetch_assoc();
+		}
+		unset($result);
+		return $row;
+	}
+
+	public function insertMovieRec($record)
+	{
+		if (isset($record["tmdb_id"])) {
+			$row = $this->getMovieRec($record["tmdb_id"]);
+			if (count($row)) {
+				// already have it!
+				return true;
+			}
+
+			$sql = $this->prepareInsert('movie_list', $record);
+			$result = $this->dbConn->query($sql);
+			return $result;
+		}
+
+		return false;
+	}
+
+	public function insertListLink($record)
+	{
+		// check if we have already linked this movie to this list before
+		$result = $this->dbConn->query("SELECT `id` FROM `list_links` WHERE movie_id=".$record["movie_id"]." AND list_id=".$record["list_id"]." LIMIT 1");
+		if ($result->num_rows) {
+			// already linked!
+			return true;
+		}
+		unset($result);
+
+		$sql = $this->prepareInsert('list_links', $record);
+		$result = $this->dbConn->query($sql);
 		return $result;
 	}
 
