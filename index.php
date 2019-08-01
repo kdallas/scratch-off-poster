@@ -167,6 +167,6 @@ if (isset($_POST["muteSfx"])) {
 	</div>
 
 	<script src="./js/soundbox.min.js"></script>
-	<script src="./js/100-movies-reveal.min.js"></script>
+	<script src="./js/100-movies-reveal.min.js?v=03"></script>
 </body>
 </html>
