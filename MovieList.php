@@ -173,7 +173,7 @@ class MovieList {
 
 	private function checkUserExists($userID)
 	{
-		$result = $this->dbConn->query("SELECT userID FROM users WHERE userID = $userID LIMIT 1");
+		$result = $this->dbConn->query("SELECT userID FROM users WHERE userID = $userID AND list_id = {$this->listID} LIMIT 1");
 		if ($result->num_rows) {
 			if ($row = $result->fetch_assoc()) {
 				return $row["userID"];
