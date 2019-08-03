@@ -5,3 +5,4 @@ define('DB_NAME', 'movies_100');
 define('DB_USER', 'homestead');
 define('DB_PASSWORD', 'secret');
 define('TMDB_API_KEY', '[your key]');
+define('GOOGLE_BOOKS_API_KEY', '[your key]');
