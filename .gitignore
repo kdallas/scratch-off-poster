@@ -4,5 +4,6 @@
 .vscode
 prepros-6.config
 assets/img.old
+assets/img/cache
 js/soundbox*
 vendor
