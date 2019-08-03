@@ -99,8 +99,6 @@ class MovieList
 					$movieList[$i++] = $row;
 				}
 			}
-		} else {
-			die("0 results");
 		}
 
 		$this->watched = $watched;
