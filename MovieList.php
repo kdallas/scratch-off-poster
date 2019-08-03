@@ -383,7 +383,6 @@ class MovieList
 					echo '<p><a href="https://www.imdb.com/title/'.$subItem["imdb_id"].'/" target="_blank">'.$subItem["title"].'</a> ('.substr($subItem["release_date"],0,4).')</p>';
 				echo '</div>';
 			}
-
 		} else {
 			foreach ($data as $subItem) {
 				echo '<div class="img">';
