@@ -24,7 +24,8 @@ if (isset($_POST["action"], $_POST["movieNo"])) {
 } else {
 	$movieList = new MovieList();
 	$movieList->loadLists();
-	$footerMsg = '';
+    $footerMsg = '';
+	$footerLogo = 'themoviedb';
 }
 
 if (isset($_POST["codeInput"])) {
@@ -68,7 +69,12 @@ if (isset($_POST["muteSfx"])) {
         <ul class="tabs">
         <?php foreach ($movieList->lists as $listRow): ?>
             <li class="tabs-title">
-                <a href="javascript:" id="tb_<?=$listRow["tabLabel"]?>" data-id="content_<?=$listRow["tabLabel"]?>" data-list_id="<?=$listRow["id"]?>" data-foot_criteria="<?=$listRow["listCriteria"]?>" class="tabmenu"<?=($listRow["selected"] ? ' aria-selected="true"' :'')?>><?=$listRow["listName"]?></a>
+                <a href="javascript:" id="tb_<?=$listRow["tabLabel"]?>"
+                   data-id="content_<?=$listRow["tabLabel"]?>"
+                   data-list_id="<?=$listRow["id"]?>"
+                   data-list_type="<?=$listRow["listType"]?>"
+                   data-foot_criteria="<?=$listRow["listCriteria"]?>"
+                   class="tabmenu"<?=($listRow["selected"] ? ' aria-selected="true"' :'')?>><?=$listRow["listName"]?></a>
             </li>
         <?php endforeach; ?>
             <li class="header-controls">
@@ -81,9 +87,19 @@ if (isset($_POST["muteSfx"])) {
 				<?php
                     if ($listRow["selected"]) {
 						$footerMsg = $listRow["listCriteria"];
+				        if ($listRow["listType"] == 'books') {
+							$footerLogo = 'google-books';
+						}
                     }
-                    if ($listRow["id"]>1) {
-                        $movieList->loadListByID($listRow["id"]);
+
+                    if ($listRow["id"]>1) { // the first list is always pre-loaded "movies" -- so don't need to load it again
+                        if ($listRow["listType"] == 'books') {
+                            unset($movieList);
+							require_once('BookList.php');
+							$movieList = new BookList($listRow["id"]);
+                        } else {
+							$movieList->loadListByID($listRow["id"]);
+                        }
                     }
 				?>
                 <div class="content-container">
@@ -160,13 +176,13 @@ if (isset($_POST["muteSfx"])) {
 			<div class="grid-x grid-padding-x align-justify">
 				<div class="cell small-8" id="foot-criteria"><?=$footerMsg?></div>
 				<div class="cell small-4 text-right">
-					<div class="themoviedb-logo"></div>
+                    <div id="foot-logo" class="<?=$footerLogo?>-logo"></div>
 				</div>
 			</div>
 		</div>
 	</div>
 
 	<script src="./js/soundbox.min.js"></script>
-	<script src="./js/100-movies-reveal.min.js?v=03"></script>
+	<script src="./js/100-movies-reveal.min.js?v=04"></script>
 </body>
 </html>

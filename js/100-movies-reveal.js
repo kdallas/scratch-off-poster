@@ -341,6 +341,8 @@ function switchTab(tab_id, tab_content)
         tab.addEventListener("click", function() {
             switchTab(this.getAttribute('id'), this.getAttribute('data-id'));
             document.getElementById('foot-criteria').textContent = this.getAttribute('data-foot_criteria');
+            var footLogoClass = this.getAttribute('data-list_type') === 'books' ? 'google-books' : 'themoviedb';
+            document.getElementById('foot-logo').setAttribute('class',footLogoClass+'-logo');
         });
     });
 
