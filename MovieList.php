@@ -2,21 +2,20 @@
 
 include('MovieListSettings.php');
 
-class MovieList {
-
+class MovieList
+{
 	private $dbSrv = DB_SERVER;
 	private $dbName = DB_NAME;
 	private $dbUser = DB_USER;
 	private $dbPass = DB_PASSWORD;
-	private $dbConn = null;
+	protected $dbConn = null;
 
-	private $listID = 0;
-
-	public  $watched = [];
-	public  $movieList = [];
-	public  $movieDBrecs = [];
-	public  $total = 0;
-	public  $lists = [];
+	protected $listID = 0;
+	public $watched = [];
+	public $movieList = [];
+	public $movieDBrecs = [];
+	public $total = 0;
+	public $lists = [];
 
 	public function __construct($listID = 1)
 	{
@@ -61,7 +60,7 @@ class MovieList {
 		unset($result);
 	}
 
-	private function loadPageData()
+	protected function loadPageData()
 	{
 		$userID = $this->getUserID(); // DF6 == mine!
 
@@ -243,7 +242,7 @@ class MovieList {
 		return $result;
 	}
 
-	private function prepareInsert($table, $record)
+	protected function prepareInsert($table, $record)
 	{
 		$columns = implode("`, `", array_keys($record));
 		$escaped_values = array_map('addslashes', array_values($record));
@@ -279,10 +278,10 @@ class MovieList {
 		return false;
 	}
 
-	public function insertListLink($record)
+	public function insertListLink($record, $type='movie_id')
 	{
 		// check if we have already linked this movie to this list before
-		$result = $this->dbConn->query("SELECT `id` FROM `list_links` WHERE movie_id=".$record["movie_id"]." AND list_id=".$record["list_id"]." LIMIT 1");
+		$result = $this->dbConn->query("SELECT `id` FROM `list_links` WHERE $type=".$record[$type]." AND list_id=".$record["list_id"]." LIMIT 1");
 		if ($result->num_rows) {
 			// already linked!
 			return true;
