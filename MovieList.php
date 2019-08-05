@@ -62,17 +62,18 @@ class MovieList
 
 	protected function loadPageData()
 	{
-		$userID = $this->getUserID(); // DF6 == mine!
-
 		// retreive watched movie list from the database
 		$watched = [];
-		$result = $this->dbConn->query("SELECT watched_list FROM users WHERE userID = $userID LIMIT 1");
-		if ($result->num_rows) {
-			if($row = $result->fetch_assoc()) {
-				$watched = json_decode($row["watched_list"]);
+
+		if ($userID = $this->getUserID()) {
+			$result = $this->dbConn->query("SELECT watched_list FROM users WHERE userID = $userID LIMIT 1");
+			if ($result->num_rows) {
+				if($row = $result->fetch_assoc()) {
+					$watched = json_decode($row["watched_list"]);
+				}
 			}
+			unset($result);
 		}
-		unset($result);
 
 		$movieList = [];
 		if ($total = count($this->movieDBrecs)) {
@@ -106,66 +107,64 @@ class MovieList
 		$this->total = $total;
 	}
 
-	private function getUserID()
+	protected function getUserID($listID = 0)
 	{
-		if (isset($_SESSION['movieLists'][$this->listID])) {
-			$userID = hexdec($_SESSION['movieLists'][$this->listID]['userCode']);
-			// check the cookie has been set
-			if (!isset($_COOKIE['movieLists'])) {
-				$this->setUserCode($userID, false);
-			} else {
-				// still need to check if the userID for this list has been set
-				$cookieIsSet = true;
-				foreach (json_decode($_COOKIE['movieLists']) as $cKey=>$cVal) {
-					if ($cKey == $this->listID && $_SESSION['movieLists'][$this->listID]['userCode'] != $cVal->userCode) {
-						$cookieIsSet = false;
-					}
-				}
+		$userID = NULL;
+		if (!$listID) {
+			$listID = $this->listID;
+		}
 
-				if (!$cookieIsSet) {
-					$this->setUserCode($userID, false);
-				}
-			}
-		} elseif (isset($_COOKIE['movieLists'])) {
-			$sessionSet = false;
+		// use the cookie values but only when a new user Code hasn't been requested
+		$updateCookies = isset($_SESSION['updateCookies']) ? $_SESSION['updateCookies'] : 0;
+
+		if (isset($_SESSION['movieLists'][$listID])) {
+			$userID = hexdec($_SESSION['movieLists'][$listID]['userCode']);
+		} elseif (isset($_COOKIE['movieLists']) && !$updateCookies) {
+			$listMatch = false;
 			foreach (json_decode($_COOKIE['movieLists']) as $cKey=>$cVal) {
-				if ($cKey == $this->listID) {
-					$_SESSION['movieLists'][$this->listID] = ['userCode'=>$cVal->userCode];
-					$sessionSet = true;
+				// copy ALL cookie values to session
+				$_SESSION['movieLists'][$cKey] = ['userCode'=>$cVal->userCode];
+				if ($cKey == $listID) {
+					$listMatch = true;
 				}
 			}
-
-			if ($sessionSet) {
-				$userID = hexdec($_SESSION['movieLists'][$this->listID]['userCode']);
-			} else {
-				$userID = $this->generateUserID();
-				$this->setUserCode($userID);
+			if ($listMatch) {
+				$userID = hexdec($_SESSION['movieLists'][$listID]['userCode']);
 			}
-		} else {
-			// if we don't have a userCode set yet, grab a generated one excluding those we've already saved before
-			$userID = $this->generateUserID();
-
-			// set the _SESSION and _COOKIE
-			$this->setUserCode($userID);
 		}
 
 		return $userID;
 	}
 
-	private function setUserCode($userID, $setSession=true)
+	public function setNewUserID($listID = 0)
 	{
-		if ($setSession) {
-			$_SESSION['movieLists'][$this->listID] = ['userCode'=>self::userID2Code($userID)];
+		// if we don't have a userCode set yet, grab a generated one excluding those we've already saved before
+		$userID = $this->generateUserID();
+
+		// set the _SESSION only
+		$this->setUserCode($userID, true, false, $listID);
+	}
+
+	private function setUserCode($userID, $setSession=true, $setCookie=false, $listID = 0)
+	{
+		if (!$listID) {
+			$listID = $this->listID;
 		}
 
-		// need to change this to only run once on page load (i.e. for ALL lists, not one at a time)
-		/*
-		setcookie(
-			"movieLists",
-			json_encode($_SESSION['movieLists']),
-			time() + (365 * 24 * 60 * 60) // 1 year
-		);
-		*/
+		if ($setSession) {
+			$_SESSION['movieLists'][$listID] = ['userCode'=>self::userID2Code($userID)];
+			// before page content is loaded, ensure the cookies are set
+			$_SESSION['updateCookies'] = 1;
+		}
+
+		if ($setCookie) {
+			$_SESSION['updateCookies'] = 0;
+			setcookie(
+				"movieLists",
+				json_encode($_SESSION['movieLists']),
+				time() + (365 * 24 * 60 * 60) // 1 year
+			);
+		}
 	}
 
 	private function checkUserExists($userID)
@@ -303,6 +302,15 @@ class MovieList
 		}
 		unset($result);
 
+		// also exclude userIDs from existing sessions
+		if (isset($_SESSION['movieLists'])) {
+			foreach($_SESSION['movieLists'] as $mList) {
+				if (isset($mList['userCode'])) {
+					$excludeIDs[] = hexdec($mList["userCode"]);
+				}
+			}
+		}
+
 		while(in_array(($userID = rand(100, 4094)), $excludeIDs));
 		return $userID;
 	}
@@ -321,28 +329,54 @@ class MovieList
 
 	public function loadLists()
 	{
-		if (!isset($_SESSION['activeMovieListID'])) {
-			$_SESSION['activeMovieListID'] = 1;
+		if (!isset($_SESSION['activeListID'])) {
+			$_SESSION['activeListID'] = 1;
 		}
 
 		if (!isset($_SESSION['sfxMuted'])) {
-			$_SESSION['sfxMuted'] = false;
+			$_SESSION['sfxMuted'] = 0;
 		}
 
 		$result = $this->dbConn->query("SELECT * FROM lists");
 		if ($result->num_rows) {
 			while($row = $result->fetch_assoc()) {
-				$row["selected"] = ($row["id"] == $_SESSION['activeMovieListID']);
+				$row["selected"] = ($row["id"] == $_SESSION['activeListID']);
 				$this->lists[] = $row;
 			}
 		}
 		unset($result);
+
+		// if this is the first run, then only list 1 will have a session
+		// iterate over the remaining list IDs and set up their sessions with a userCode
+		foreach ($this->lists as $list) {
+			if (!isset($_SESSION['movieLists'][$list['id']]['userCode'])) {
+				$this->setNewUserID($list['id']);
+			}
+		}
+
+		$updateCookies = isset($_SESSION['updateCookies']) ? $_SESSION['updateCookies'] : 0;
+
+		// check & set COOKIES here as this will only be loaded once on initial GET request
+		if (!isset($_COOKIE['movieLists']) || $updateCookies) {
+			$this->setUserCode(0, false, true);
+		} else {
+			// if cookies are already set, then we should override the userCodes in the session
+			// this is because they may have been randomly generated, and we should use whatever was already saved
+			foreach (json_decode($_COOKIE['movieLists']) as $cKey=>$cVal) {
+				foreach ($this->lists as $list) {
+					if ($cKey == $list['id']) {
+						$_SESSION['movieLists'][$cKey] = ['userCode'=>$cVal->userCode];
+					}
+				}
+			}
+		}
 	}
 
+	// called from POST only
 	public function loadUserCode($userCode)
 	{
 		if ($userID = $this->checkUserExists(hexdec($userCode))) {
-			// set the _SESSION and _COOKIE
+			// set the _SESSION only
 			$this->setUserCode($userID);
 		}
 

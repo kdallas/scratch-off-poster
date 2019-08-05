@@ -37,14 +37,12 @@ if (isset($_POST["codeInput"])) {
 
 if (isset($_POST["codeRequest"])) {
     $listID = $_POST["listID"];
-	$userID = $movieList->generateUserID();
-	$_SESSION['movieLists'][$listID] = ['userCode' => $movieList->userID2Code($userID)];
-	echo $_SESSION['movieLists'][$listID]['userCode'];
+	$movieList->setNewUserID($listID);
 	die();
 }
 
 if (isset($_POST["activeListID"])) {
-	$_SESSION['activeMovieListID'] = $_POST["activeListID"];
+	$_SESSION['activeListID'] = $_POST["activeListID"];
 	die();
 }
 
