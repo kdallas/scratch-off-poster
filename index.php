@@ -36,8 +36,7 @@ if (isset($_POST["codeInput"])) {
 }
 
 if (isset($_POST["codeRequest"])) {
-    $listID = $_POST["listID"];
-	$movieList->setNewUserID($listID);
+	$movieList->setNewUserID($_SESSION['activeListID']);
 	die();
 }
 
@@ -58,6 +57,16 @@ if (isset($_POST["muteSfx"])) {
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<title>100 Movies Bucket List Scratch off Poster - How many can you scratch off?</title>
+    <meta property="og:url" content="//<?=$_SERVER["HTTP_HOST"]?>/100-movies/" />
+    <meta property="og:title" content="Scratch-off Posters | Web Labs Perth" />
+    <meta property="og:description" content="Scratch-off Movie & Book Posters - How many can you scratch off?"/>
+    <meta property="og:image" content="//<?=$_SERVER["HTTP_HOST"]?>/100-movies/assets/img/100-movies-preview_r1a.png" />
+    <meta property="og:image:width" content="398" />
+    <meta property="og:image:height" content="208" />
+    <meta property="og:type" content="article" />
+    <meta property="fb:admins" content="810832242" />
+    <meta itemprop="name" content="Scratch-off Posters | Web Labs Perth" />
+    <meta itemprop="image" content="//<?=$_SERVER["HTTP_HOST"]?>/100-movies/assets/img/100-movies-preview_r1a.png" />
 	<link href="./css/site.min.css" rel="stylesheet" />
 	<link href="assets/img/movie-play-button-icon_r1.png" rel="icon" type="image/png" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
