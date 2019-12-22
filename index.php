@@ -100,12 +100,13 @@ if (isset($_POST["muteSfx"])) {
                     }
 
                     if ($listRow["id"]>1) { // the first list is always pre-loaded "movies" -- so don't need to load it again
+						unset($movieList);
                         if ($listRow["listType"] == 'books') {
-                            unset($movieList);
 							require_once('BookList.php');
 							$movieList = new BookList($listRow["id"]);
                         } else {
-							$movieList->loadListByID($listRow["id"]);
+                            // needed to destroy previous movie list (as it potentially will be a book list or other type going forward)
+							$movieList = new MovieList($listRow["id"]);
                         }
                     }
 				?>

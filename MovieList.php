@@ -407,7 +407,7 @@ class MovieList
 		if (count($data) == 1) {
 			foreach ($data as $subItem) {
 				echo '<div class="img" data-no="'.$subItem["no"].'" data-watched="'.$subItem["watched"].'">';
-					echo '<img src="https://image.tmdb.org/t/p/w185/'.$subItem["poster_path"].'">';
+					echo '<img src="https://image.tmdb.org/t/p/w185'.$subItem["poster_path"].'">';
 					$watchedClass = $subItem["watched"] ? ' class="hide"' : '';
 					echo '<canvas'.$watchedClass.'></canvas>';
 					echo '</div>';
