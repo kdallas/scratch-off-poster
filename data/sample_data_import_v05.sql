@@ -318,7 +318,7 @@ INSERT INTO `movie_list` VALUES ('177', 'Star Wars: Clone Wars (Series)', '/3Uv9
 INSERT INTO `movie_list` VALUES ('178', 'Star Wars: The Clone Wars', '/xd6yhmtS6mEURZLwUDT5raEMbf.jpg', '12180', 'tt1185834', '2008-08-14');
 INSERT INTO `movie_list` VALUES ('179', 'Star Wars: The Clone Wars (Series)', '/p6s2svEHHLsQ1TOw4Si54c1dD5L.jpg', '4194', 'tt0458290', '2008-10-03');
 INSERT INTO `movie_list` VALUES ('180', 'Star Wars: Episode III - Revenge of the Sith', '/tgr5Pdy7ehZYBqBkN2K7Q02xgOb.jpg', '1895', 'tt0121766', '2005-05-17');
-INSERT INTO `movie_list` VALUES ('181', 'Star Wars: Rebels', '/dfzbkhKMnkdwiG1AAIJnrc9SDdY.jpg', '60554', 'tt2930604', '2014-10-03');
+INSERT INTO `movie_list` VALUES ('181', 'Star Wars: Rebels (Series)', '/dfzbkhKMnkdwiG1AAIJnrc9SDdY.jpg', '60554', 'tt2930604', '2014-10-03');
 INSERT INTO `movie_list` VALUES ('182', 'Star Wars: Episode VII - The Force Awakens', '/weUSwMdQIa3NaXVzwUoIIcAi85d.jpg', '140607', 'tt2488496', '2015-12-17');
 INSERT INTO `movie_list` VALUES ('183', 'Rogue One: A Star Wars Story', '/qjiskwlV1qQzRCjpV0cL9pEMF9a.jpg', '330459', 'tt3748528', '2016-12-15');
 INSERT INTO `movie_list` VALUES ('184', 'Star Wars: Episode VIII - The Last Jedi', '/kOVEVeg59E0wsnXmF9nrh6OmWII.jpg', '181808', 'tt2527336', '2017-12-14');
