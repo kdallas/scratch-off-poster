@@ -90,7 +90,7 @@ if (isset($_POST["muteSfx"])) {
         </ul>
 
 		<?php foreach ($movieList->lists as $listRow): ?>
-            <div id="content_<?=$listRow["tabLabel"]?>" class="tabcontent" <?=(!$listRow["selected"] ? ' style="display:none;"' : '')?>>
+            <div id="content_<?=$listRow["tabLabel"]?>" class="tabcontent"<?=(!$listRow["selected"] ? ' style="display:none;"' : '')?>>
 				<?php
                     if ($listRow["selected"]) {
 						$footerMsg = $listRow["listCriteria"];
