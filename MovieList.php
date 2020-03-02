@@ -83,7 +83,6 @@ class MovieList
 				if (count($watched)) {
 					foreach($watched as $noSeen) {
 						if ($noSeen == $row["no"]) {
-							$watchedClass = ' watched';
 							$row["watched"] = 1;
 						}
 					}
@@ -406,14 +405,8 @@ class MovieList
 
 		if (count($data) == 1) {
 			foreach ($data as $subItem) {
-				echo '<div class="img" data-no="'.$subItem["no"].'" data-watched="'.$subItem["watched"].'">';
-					echo '<img src="https://image.tmdb.org/t/p/w185'.$subItem["poster_path"].'">';
-					$watchedClass = $subItem["watched"] ? ' class="hide"' : '';
-					echo '<canvas'.$watchedClass.'></canvas>';
-					echo '</div>';
-					echo '<div class="card-section">';
-					echo '<p><a href="https://www.imdb.com/title/'.$subItem["imdb_id"].'/" target="_blank">'.$subItem["title"].'</a> ('.substr($subItem["release_date"],0,4).')</p>';
-				echo '</div>';
+				$this->displayCardImg($subItem);
+				$this->displayCardSection($subItem);
 			}
 		} else {
 			foreach ($data as $subItem) {
@@ -432,18 +425,33 @@ class MovieList
 						echo '</div>';
 					echo '</span>';
 
-					echo '<div class="multi-img" data-no="'.$subItem["no"].'" data-watched="'.$subItem["watched"].'">';
-						echo '<img src="https://image.tmdb.org/t/p/w185/'.$subItem["poster_path"].'">';
-						$watchedClass = $subItem["watched"] ? ' class="hide"' : '';
-						echo '<canvas'.$watchedClass.'></canvas>';
-					echo '</div>';
+					$this->displayCardImg($subItem, true);
 
-				echo '</div>';
+				echo '</div>'; // .img
 
-				echo '<div class="card-section">';
-				echo '<p><a href="https://www.imdb.com/title/'.$subItem["imdb_id"].'/" target="_blank">'.$subItem["title"].'</a> ('.substr($subItem["release_date"],0,4).')</p>';
-				echo '</div>';
+				$this->displayCardSection($subItem);
 			}
 		}
+	}
+
+	private function displayCardImg(&$subItem, $multi=false)
+	{
+		echo '<div class="'.($multi ? 'multi-' : '').'img" data-no="'.$subItem["no"].'" data-watched="'.$subItem["watched"].'">';
+		$imgPath = 'assets/img/cache'.$subItem["poster_path"];
+		// although not strictly necessary to cache the thumbnails (i.e. TMDB is fast) - this will perform better under SPA circumstances
+		if (!file_exists($imgPath)) {
+			copy('https://image.tmdb.org/t/p/w185'.$subItem["poster_path"], $imgPath);
+		}
+		echo '<img src="'.$imgPath.'" />';
+
+		echo '<canvas'.($subItem["watched"] ? ' class="hide"' : '').'></canvas>';
+		echo '</div>';
+	}
+
+	private function displayCardSection(&$subItem)
+	{
+		echo '<div class="card-section">';
+		echo '<p><a href="https://www.imdb.com/title/'.$subItem["imdb_id"].'/" target="_blank">'.$subItem["title"].'</a> ('.substr($subItem["release_date"],0,4).')</p>';
+		echo '</div>';
 	}
 }
