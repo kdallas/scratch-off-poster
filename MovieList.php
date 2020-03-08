@@ -144,6 +144,11 @@ class MovieList
 		$this->setUserCode($userID, true, false, $listID);
 	}
 
+	public function setCookieOnly()
+	{
+		$this->setUserCode(0, false, true);
+	}
+
 	private function setUserCode($userID, $setSession=true, $setCookie=false, $listID = 0)
 	{
 		if (!$listID) {
@@ -158,9 +163,11 @@ class MovieList
 
 		if ($setCookie) {
 			$_SESSION['updateCookies'] = 0;
+			$cookieArr = $_SESSION['movieLists'];
+			$cookieArr['settings'] = ['sfxMuted'=>$_SESSION['sfxMuted'], 'activeListID'=>$_SESSION['activeListID']];
 			setcookie(
 				"movieLists",
-				json_encode($_SESSION['movieLists']),
+				json_encode($cookieArr),
 				time() + (365 * 24 * 60 * 60) // 1 year
 			);
 		}
@@ -357,7 +364,7 @@ class MovieList
 
 		// check & set COOKIES here as this will only be loaded once on initial GET request
 		if (!isset($_COOKIE['movieLists']) || $updateCookies) {
-			$this->setUserCode(0, false, true);
+			$this->setCookieOnly();
 		} else {
 			// if cookies are already set, then we should override the userCodes in the session
 			// this is because they may have been randomly generated, and we should use whatever was already saved
@@ -366,6 +373,11 @@ class MovieList
 					if ($cKey == $list['id']) {
 						$_SESSION['movieLists'][$cKey] = ['userCode'=>$cVal->userCode];
 					}
+				}
+
+				if (is_array($cVal) && $cKey == 'settings') {
+					$_SESSION['sfxMuted'] = $cVal['sfxMuted'];
+					$_SESSION['activeListID'] = $cVal['activeListID'];
 				}
 			}
 		}

@@ -42,11 +42,13 @@ if (isset($_POST["codeRequest"])) {
 
 if (isset($_POST["activeListID"])) {
 	$_SESSION['activeListID'] = $_POST["activeListID"];
+	$movieList->setCookieOnly();
 	die();
 }
 
 if (isset($_POST["muteSfx"])) {
 	$_SESSION['sfxMuted'] = ($_POST["muteSfx"]);
+	$movieList->setCookieOnly();
 	die();
 }
 
