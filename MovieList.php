@@ -121,10 +121,12 @@ class MovieList
 		} elseif (isset($_COOKIE['movieLists']) && !$updateCookies) {
 			$listMatch = false;
 			foreach (json_decode($_COOKIE['movieLists']) as $cKey=>$cVal) {
-				// copy ALL cookie values to session
-				$_SESSION['movieLists'][$cKey] = ['userCode'=>$cVal->userCode];
-				if ($cKey == $listID) {
-					$listMatch = true;
+				// copy ALL cookie LIST values to session
+				if (isset($cVal->userCode)) {
+					$_SESSION['movieLists'][$cKey] = ['userCode'=>$cVal->userCode];
+					if ($cKey == $listID) {
+						$listMatch = true;
+					}
 				}
 			}
 			if ($listMatch) {
@@ -335,12 +337,19 @@ class MovieList
 
 	public function loadLists()
 	{
-		if (!isset($_SESSION['activeListID'])) {
+		if (!isset($_SESSION['activeListID'],$_SESSION['sfxMuted'])) {
+			// set default values and then attempt to load from the COOKIE
 			$_SESSION['activeListID'] = 1;
-		}
-
-		if (!isset($_SESSION['sfxMuted'])) {
 			$_SESSION['sfxMuted'] = 0;
+
+			if (isset($_COOKIE['movieLists'])) {
+				foreach (json_decode($_COOKIE['movieLists']) as $cKey=>$cVal) {
+					if ($cKey == 'settings') {
+						$_SESSION['sfxMuted'] = $cVal->sfxMuted;
+						$_SESSION['activeListID'] = $cVal->activeListID;
+					}
+				}
+			}
 		}
 
 		$result = $this->dbConn->query("SELECT * FROM lists");
@@ -373,11 +382,6 @@ class MovieList
 					if ($cKey == $list['id']) {
 						$_SESSION['movieLists'][$cKey] = ['userCode'=>$cVal->userCode];
 					}
-				}
-
-				if (is_array($cVal) && $cKey == 'settings') {
-					$_SESSION['sfxMuted'] = $cVal['sfxMuted'];
-					$_SESSION['activeListID'] = $cVal['activeListID'];
 				}
 			}
 		}
