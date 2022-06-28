@@ -75,21 +75,23 @@ if (isset($_POST["muteSfx"])) {
 </head>
 <body>
 	<div class="master-container">
-        <ul class="tabs">
-        <?php foreach ($movieList->lists as $listRow): ?>
-            <li class="tabs-title">
-                <a href="javascript:" id="tb_<?=$listRow["tabLabel"]?>"
-                   data-id="content_<?=$listRow["tabLabel"]?>"
-                   data-list_id="<?=$listRow["id"]?>"
-                   data-list_type="<?=$listRow["listType"]?>"
-                   data-foot_criteria="<?=$listRow["listCriteria"]?>"
-                   class="tabmenu"<?=($listRow["selected"] ? ' aria-selected="true"' :'')?>><?=$listRow["listName"]?></a>
-            </li>
-        <?php endforeach; ?>
-            <li class="header-controls">
-                <h4><small><span id="mute-btn" class="icon icon-volume-<?=($_SESSION['sfxMuted'] ? 'mute2" title="Unm' : 'high" title="M')?>ute"></span></small></h4>
-            </li>
-        </ul>
+        <div id="menu-tabs">
+            <ul class="tabs">
+                <?php foreach ($movieList->lists as $listRow): ?>
+                    <li class="tabs-title">
+                        <a href="javascript:" id="tb_<?=$listRow["tabLabel"]?>"
+                           data-id="content_<?=$listRow["tabLabel"]?>"
+                           data-list_id="<?=$listRow["id"]?>"
+                           data-list_type="<?=$listRow["listType"]?>"
+                           data-foot_criteria="<?=$listRow["listCriteria"]?>"
+                           class="tabmenu"<?=($listRow["selected"] ? ' aria-selected="true"' :'')?>><?=$listRow["listName"]?></a>
+                    </li>
+                <?php endforeach; ?>
+                <li class="header-controls">
+                    <h4><small><span id="mute-btn" class="icon icon-volume-<?=($_SESSION['sfxMuted'] ? 'mute2" title="Unm' : 'high" title="M')?>ute"></span></small></h4>
+                </li>
+            </ul>
+        </div>
 
 		<?php foreach ($movieList->lists as $listRow): ?>
             <div id="content_<?=$listRow["tabLabel"]?>" class="tabcontent"<?=(!$listRow["selected"] ? ' style="display:none;"' : '')?>>

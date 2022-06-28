@@ -7,19 +7,37 @@ body {
 .master-container {
     padding: 0 10px;
 
-    .tabs {
-        .header-controls {
-            float: right;
-            margin-right: 10px;
-            #mute-btn {
-                color: #1779ba;
-                transition: color 0.25s ease-out;
-                cursor: pointer;
-                &:hover {
-                    color: #14679e;
+    #menu-tabs {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        padding: 0 10px;
+        left: 0;
+        z-index: 1;
+
+        .tabs {
+            box-shadow: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
+            border-bottom-right-radius: 5px;
+            border-bottom-left-radius: 5px;
+            margin-bottom: 10px;
+
+            .header-controls {
+                float: right;
+                margin-right: 10px;
+                #mute-btn {
+                    color: #1779ba;
+                    transition: color 0.25s ease-out;
+                    cursor: pointer;
+                    &:hover {
+                        color: #14679e;
+                    }
                 }
             }
         }
+    }
+
+    #content_bucket {
+        margin-top: 70px;
     }
 
     .content-container {

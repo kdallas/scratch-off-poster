@@ -1,9 +1,8 @@
-var sfxMuted = false;
+let sfxMuted = false;
 
-function panelSmarts(panel, listID)
-{
-    var imgPanel = panel.parentElement;
-    var img = new Image();
+const panelSmarts = function(panel, listID) {
+    const imgPanel = panel.parentElement;
+    let img = new Image();
     img.addEventListener('load', imgOnLoad);
     img.crossOrigin = "Anonymous";
     img.src = imgPanel.querySelector('img').src;
@@ -11,29 +10,29 @@ function panelSmarts(panel, listID)
     function imgOnLoad() {
         panel.width = img.width;
         panel.height = img.height;
-        var pixels = panel.width * panel.height;
+        const pixels = panel.width * panel.height;
 
-        var brushRadius = 15;
-        var downTimer = 0;
-        var panelCtx = panel.getContext('2d');
+        const brushRadius = 15;
+        let downTimer = 0;
+        const panelCtx = panel.getContext('2d');
 
         panelCtx.drawImage(img, 0, 0, panel.width, panel.height);
         panelCtx.save();
 
-        var defaultStatusMsg = "Waiting for something amazing to happen...";
-        var scratchedStatusMsg = "Well done, you claim to have watched 100% of the entirety of this movie!";
-        var scratchingStatusMsg = "What do you think you're doing?!";
+        const defaultStatusMsg = "Waiting for something amazing to happen...";
+        const scratchedStatusMsg = "Well done, you claim to have watched 100% of the entirety of this movie!";
+        const scratchingStatusMsg = "What do you think you're doing?!";
 
-        var controlsArea = imgPanel.parentElement.querySelector('.controls');
-        var resetIcon = controlsArea.querySelector('.icon-cancel-circle');
+        const controlsArea = imgPanel.parentElement.querySelector('.controls');
+        const resetIcon = controlsArea.querySelector('.icon-cancel-circle');
         resetIcon.setAttribute('title', "Restore the scratchable layer!");
-        var fastForwardIcon = controlsArea.querySelector('.icon-forward2');
+        const fastForwardIcon = controlsArea.querySelector('.icon-forward2');
         fastForwardIcon.setAttribute('title', "Scratch this movie off the lazy way!");
 
-        var movieNo = imgPanel.getAttribute('data-no');
-        var movieWatched = parseInt(imgPanel.getAttribute('data-watched'));
+        const movieNo = imgPanel.getAttribute('data-no');
+        let movieWatched = parseInt(imgPanel.getAttribute('data-watched'));
 
-        var statusIcon = null;
+        let statusIcon = null;
         if (movieWatched) {
             statusIcon = controlsArea.querySelector('.icon-checkmark2');
             statusIcon.setAttribute('title', scratchedStatusMsg);
@@ -56,7 +55,7 @@ function panelSmarts(panel, listID)
         panel.addEventListener("mouseup", scratchingEnded);
 
         panel.addEventListener("mousemove", function(e) {
-            var brushPos = getBrushPos(e.clientX, e.clientY);
+            const brushPos = getBrushPos(e.clientX, e.clientY);
             if (detectLeftButton(e)) {
                 drawDot(brushPos.x, brushPos.y);
             }
@@ -67,9 +66,9 @@ function panelSmarts(panel, listID)
 
         panel.addEventListener("touchmove", function(e) {
             e.preventDefault();
-            var touch = e.targetTouches[0];
+            const touch = e.targetTouches[0];
             if (touch) {
-                var brushPos = getBrushPos(touch.pageX, touch.pageY);
+                const brushPos = getBrushPos(touch.pageX, touch.pageY);
                 drawDot(brushPos.x, brushPos.y);
             }
         }, false);
@@ -111,7 +110,7 @@ function panelSmarts(panel, listID)
 
         function getBrushPos(xRef, yRef)
         {
-            var panelRect = panel.getBoundingClientRect();
+            const panelRect = panel.getBoundingClientRect();
             return {
                 x: Math.floor((xRef-panelRect.left)/(panelRect.right-panelRect.left)*panel.width),
                 y: Math.floor((yRef-panelRect.top)/(panelRect.bottom-panelRect.top)*panel.height)
@@ -146,23 +145,23 @@ function panelSmarts(panel, listID)
                     movieWatched = 0;
                 }
 
-                var watchCount = panel.closest('.grid-container.full').querySelector('.watched');
-                var no = parseInt(watchCount.textContent);
-                watchCount.textContent = movieWatched ? (no+1) : (no-1);
+                const watchCount = panel.closest('.grid-container.full').querySelector('.watched');
+                let no = parseInt(watchCount.textContent);
+                watchCount.textContent = String(movieWatched ? (no+1) : (no-1));
             });
         }
 
         function scratchPercent()
         {
-            var hits = 0,
-                imageData = panelCtx.getImageData(0, 0, panel.width, panel.height);
-    
-            for (var i=0, ii=imageData.data.length; i<ii; i=i+4) {
+            const imageData = panelCtx.getImageData(0, 0, panel.width, panel.height);
+            let hits = 0;
+
+            for (let i=0, ii=imageData.data.length; i<ii; i=i+4) {
                 if (imageData.data[i] === 0 && imageData.data[i+1] === 0 && imageData.data[i+2] === 0 && imageData.data[i+3] === 0) {
                 hits++;
                 }
             }
-            
+
             return (hits / pixels) * 100;
         }
 
@@ -232,12 +231,10 @@ function panelSmarts(panel, listID)
             }, 1500);
         }
     }
-}
+};
 
-//function ajaxPost(request, cb)
-var ajaxPost = function(request, cb)
-{
-    var xhr = new XMLHttpRequest();
+const ajaxPost = function(request, cb) {
+    const xhr = new XMLHttpRequest();
 
     xhr.open('POST', './');
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -259,24 +256,22 @@ var ajaxPost = function(request, cb)
     xhr.send(request);
 };
 
-var playBtnSfx = function()
-{
+const playBtnSfx = function() {
     if (!sfxMuted) {
-        var sounds = [
+        const sounds = [
             'comp11',
             'comp12'
         ];
-        var soundNo = Math.floor(Math.random()*sounds.length);
+        const soundNo = Math.floor(Math.random()*sounds.length);
         soundbox.play(sounds[soundNo]);
     }
 };
 
-function switchTab(tab_id, tab_content)
-{
+const switchTab = function(tab_id, tab_content) {
     playBtnSfx();
 
-    var elems = document.getElementsByClassName("tabcontent");
-    var i;
+    let elems = document.getElementsByClassName("tabcontent");
+    let i;
     for (i = 0; i < elems.length; i++) {
         elems[i].style.display = 'none';
     }
@@ -287,28 +282,28 @@ function switchTab(tab_id, tab_content)
         elems[i].removeAttribute('aria-selected');
     }
 
-    var activeTab = document.getElementById(tab_id);
-    activeTab.setAttribute('aria-selected', true);
+    const activeTab = document.getElementById(tab_id);
+    activeTab.setAttribute('aria-selected', 'true');
     ajaxPost(encodeURI('activeListID=' + activeTab.dataset.list_id));
-}
+};
 
 
 (function() {
-    var gridTops = document.querySelectorAll('.cards-100-top');
+    const gridTops = document.querySelectorAll('.cards-100-top');
 
     gridTops.forEach(function(gridTop){
-        var gridBody = gridTop.nextElementSibling; // .cards-100-gallery
+        const gridBody = gridTop.nextElementSibling; // .cards-100-gallery
 
-        var waitAnim = gridTop.querySelector('.waiting');
-        var codeInput = gridTop.querySelector('.userCode > input');
-        var codeButton = gridTop.querySelector('.button');
+        const waitAnim = gridTop.querySelector('.waiting');
+        const codeInput = gridTop.querySelector('.userCode > input');
+        const codeButton = gridTop.querySelector('.button');
 
         codeInput.addEventListener("keyup", function(e) {
             if (e.key === "Enter") {
                 waitAnim.classList.remove('hide');
                 codeButton.classList.add('hide');
 
-                var oldCode = codeInput.getAttribute('data-code');
+                const oldCode = codeInput.getAttribute('data-code');
                 ajaxPost(encodeURI('codeInput=' + codeInput.value + '&listID=' + gridBody.dataset.id), function(response) {
                     if (response !== oldCode.toUpperCase()) {
                         document.location.reload(true);
@@ -330,23 +325,23 @@ function switchTab(tab_id, tab_content)
             });
         });
 
-        var panels = gridBody.querySelectorAll('canvas');
+        const panels = gridBody.querySelectorAll('canvas');
         panels.forEach(function(panel){
             panelSmarts(panel, gridBody.dataset.id);
         });
     });
 
-    var tabLinks = document.querySelectorAll('.tabmenu');
+    const tabLinks = document.querySelectorAll('.tabmenu');
     tabLinks.forEach(function(tab){
         tab.addEventListener("click", function() {
             switchTab(this.getAttribute('id'), this.getAttribute('data-id'));
             document.getElementById('foot-criteria').textContent = this.getAttribute('data-foot_criteria');
-            var footLogoClass = this.getAttribute('data-list_type') === 'books' ? 'google-books' : 'themoviedb';
+            const footLogoClass = this.getAttribute('data-list_type') === 'books' ? 'google-books' : 'themoviedb';
             document.getElementById('foot-logo').setAttribute('class',footLogoClass+'-logo');
         });
     });
 
-    var muteButton = document.getElementById('mute-btn');
+    const muteButton = document.getElementById('mute-btn');
     if (muteButton.classList.contains('icon-volume-mute2')) {
         sfxMuted = true;
     }
@@ -369,18 +364,19 @@ function switchTab(tab_id, tab_content)
     });
 
     window.addEventListener("load", function() {
+        const path = '/100-movies/assets/sound/';
         window.soundbox = new SoundBox();
-        soundbox.load('scratching', '/100-movies/assets/sound/Scratching-Paper.mp3');
-        soundbox.load('pickup7a',   '/100-movies/assets/sound/Pickup_Coin7a.mp3');
-        soundbox.load('pickup7b',   '/100-movies/assets/sound/Pickup_Coin7b.mp3');
-        soundbox.load('comp11',     '/100-movies/assets/sound/STcomp011.wav');
-        soundbox.load('comp12',     '/100-movies/assets/sound/STcomp012.wav');
+        soundbox.load('scratching', path+'Scratching-Paper.mp3').then(function(evt){ });
+        soundbox.load('pickup7a',   path+'Pickup_Coin7a.mp3').then(function(evt){ });
+        soundbox.load('pickup7b',   path+'Pickup_Coin7b.mp3').then(function(evt){ });
+        soundbox.load('comp11',     path+'STcomp011.wav').then(function(evt){ });
+        soundbox.load('comp12',     path+'STcomp012.wav').then(function(evt){ });
 
         gridTops.forEach(function(gridTop){
-            var gridBody = gridTop.nextElementSibling; // .cards-100-gallery
+            const gridBody = gridTop.nextElementSibling; // .cards-100-gallery
             gridBody.classList.remove('hide');
 
-            var waitAnim = gridTop.querySelector('.waiting');
+            const waitAnim = gridTop.querySelector('.waiting');
             waitAnim.classList.add('hide');
         });
     });
