@@ -20,6 +20,18 @@ body {
             border-bottom-right-radius: 5px;
             border-bottom-left-radius: 5px;
             margin-bottom: 10px;
+            border: none;
+
+            .tabs-title:first-child {
+                a {
+                    border-bottom-left-radius: 5px;
+                }
+            }
+            .tabs-title:last-child {
+                a {
+                    border-bottom-right-radius: 5px;
+                }
+            }
 
             .header-controls {
                 float: right;
