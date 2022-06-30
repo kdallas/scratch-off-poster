@@ -268,8 +268,6 @@ const playBtnSfx = function() {
 };
 
 const switchTab = function(list_id) {
-    playBtnSfx();
-
     const elems = document.getElementsByClassName("tabmenu");
     for (let i = 0; i < elems.length; i++) {
         elems[i].removeAttribute('aria-selected');
@@ -354,6 +352,7 @@ const addGridEvents = function() {
     const tabLinks = document.querySelectorAll('.tabmenu');
     tabLinks.forEach(function(tab){
         tab.addEventListener("click", function() {
+            playBtnSfx();
             switchTab(this.getAttribute('data-list_id'));
             document.getElementById('foot-criteria').textContent = this.getAttribute('data-foot_criteria');
             const footLogoClass = this.getAttribute('data-list_type') === 'books' ? 'google-books' : 'themoviedb';
