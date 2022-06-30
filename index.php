@@ -200,7 +200,7 @@ if ($listID) {
     </div>
 
     <script src="./js/soundbox.min.js"></script>
-    <script src="./js/100-movies-reveal.min.js?v=05"></script>
+    <script src="./js/100-movies-reveal.min.js?v=05.1"></script>
 </body>
 </html>
 
