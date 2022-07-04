@@ -42,14 +42,36 @@
 @include foundation-visibility-classes;
 
 
-.cards-100-gallery {  
-    @include breakpoint(small) {
+$breakpoints: (
+   xsmall:    0px,
+  smaller:  350px,
+    small:  550px,
+   medium:  800px,
+    large: 1024px,
+   xlarge: 1200px,
+  xxlarge: 1440px,
+);
+
+.cards-100-gallery {
+    @include breakpoint(xsmall) {
+        @include xy-grid-layout(1, '.gallery-cell', true, 13);
+    }
+    @include breakpoint(smaller) {
         @include xy-grid-layout(2, '.gallery-cell', true, 13);
+    }
+    @include breakpoint(small) {
+        @include xy-grid-layout(3, '.gallery-cell', true, 13);
     }
     @include breakpoint(medium) {
         @include xy-grid-layout(5, '.gallery-cell', true, 13);
     }
     @include breakpoint(large) {
+        @include xy-grid-layout(7, '.gallery-cell', true, 13);
+    }
+    @include breakpoint(xlarge) {
+        @include xy-grid-layout(8, '.gallery-cell', true, 13);
+    }
+    @include breakpoint(xxlarge) {
         @include xy-grid-layout(10, '.gallery-cell', true, 13);
     }
 }
