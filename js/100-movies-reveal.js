@@ -12,7 +12,6 @@ const panelSmarts = function(panel, listID) {
         panel.height = img.height;
         const pixels = panel.width * panel.height;
 
-        const brushRadius = 15;
         let downTimer = 0;
         const panelCtx = panel.getContext('2d');
 
@@ -68,7 +67,7 @@ const panelSmarts = function(panel, listID) {
             e.preventDefault();
             const touch = e.targetTouches[0];
             if (touch) {
-                const brushPos = getBrushPos(touch.pageX, touch.pageY);
+                const brushPos = getBrushPos(touch.clientX, touch.clientY);
                 drawDot(brushPos.x, brushPos.y);
             }
         }, false);
@@ -123,14 +122,19 @@ const panelSmarts = function(panel, listID) {
             panelCtx.lineJoin = 'round';
             panelCtx.lineCap = 'round';
             panelCtx.fillStyle = '#000';
-    
+
+            const clientWidth = panelCtx.canvas.clientWidth;
+            const clientHeight = panelCtx.canvas.clientHeight;
+            const brushX = panel.width / clientWidth * 4;
+            const brushY = panel.height / clientHeight * 8;
+
             panelCtx.beginPath();
-            panelCtx.arc((mouseX-5), (mouseY+10), brushRadius, 0, 2 * Math.PI);
+            panelCtx.arc(mouseX, mouseY, (brushX + brushY), 0, 2 * Math.PI);
             panelCtx.closePath();
             panelCtx.fill();
-    
+
             panelCtx.beginPath();
-            panelCtx.moveTo((mouseX-5), (mouseY+10));
+            panelCtx.moveTo(mouseX, mouseY);
         }
 
         function updateUser(action)
