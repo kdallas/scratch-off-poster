@@ -181,10 +181,16 @@ if ($listID) {
                            class="tabmenu"<?=($listRow["selected"] ? ' aria-selected="true"' :'')?>><?=$listRow["listName"]?></a>
                     </li>
                 <?php endforeach; ?>
+                <!--
                 <li class="header-controls">
                     <h4><small><span id="mute-btn" class="icon icon-volume-<?=($_SESSION['sfxMuted'] ? 'mute2" title="Unm' : 'high" title="M')?>ute"></span></small></h4>
                 </li>
+                -->
             </ul>
+            <div class="header-controls">
+                <h4><small><span id="mute-btn" class="icon icon-volume-<?=($_SESSION['sfxMuted'] ? 'mute2" title="Unm' : 'high" title="M')?>ute"></span></small></h4>
+            </div>
+
         </div>
 
         <div id="app" class="tabcontent"></div>

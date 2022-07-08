@@ -22,6 +22,10 @@ body {
             margin-bottom: 10px;
             border: none;
 
+            overflow-x: hidden;
+            height: 52px;
+            display: inline-block;
+
             .tabs-title:first-child {
                 a {
                     border-bottom-left-radius: 5px;
@@ -33,6 +37,7 @@ body {
                 }
             }
 
+            /*
             .header-controls {
                 float: right;
                 margin-right: 10px;
@@ -45,7 +50,32 @@ body {
                     }
                 }
             }
+            */
+
         }
+
+
+        .header-controls {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            #mute-btn {
+                font-size: 25px;
+                color: #1779ba;
+                transition: color 0.25s ease-out;
+                cursor: pointer;
+
+                background-color: #f1f1f1;
+                border-radius: 50%;
+                padding: 5px;
+
+                &:hover {
+                    color: #14679e;
+                }
+            }
+        }
+
+
     }
 
     .tabcontent {
