@@ -12,7 +12,6 @@ const panelSmarts = function(panel, listID) {
         panel.height = img.height;
         const pixels = panel.width * panel.height;
 
-        const brushRadius = 15;
         let downTimer = 0;
         const panelCtx = panel.getContext('2d');
 
@@ -68,7 +67,7 @@ const panelSmarts = function(panel, listID) {
             e.preventDefault();
             const touch = e.targetTouches[0];
             if (touch) {
-                const brushPos = getBrushPos(touch.pageX, touch.pageY);
+                const brushPos = getBrushPos(touch.clientX, touch.clientY);
                 drawDot(brushPos.x, brushPos.y);
             }
         }, false);
@@ -123,14 +122,19 @@ const panelSmarts = function(panel, listID) {
             panelCtx.lineJoin = 'round';
             panelCtx.lineCap = 'round';
             panelCtx.fillStyle = '#000';
-    
+
+            const clientWidth = panelCtx.canvas.clientWidth;
+            const clientHeight = panelCtx.canvas.clientHeight;
+            const brushX = panel.width / clientWidth * 4;
+            const brushY = panel.height / clientHeight * 8;
+
             panelCtx.beginPath();
-            panelCtx.arc((mouseX-5), (mouseY+10), brushRadius, 0, 2 * Math.PI);
+            panelCtx.arc(mouseX, mouseY, (brushX + brushY), 0, 2 * Math.PI);
             panelCtx.closePath();
             panelCtx.fill();
-    
+
             panelCtx.beginPath();
-            panelCtx.moveTo((mouseX-5), (mouseY+10));
+            panelCtx.moveTo(mouseX, mouseY);
         }
 
         function updateUser(action)
@@ -267,28 +271,35 @@ const playBtnSfx = function() {
     }
 };
 
-const switchTab = function(tab_id, tab_content) {
-    playBtnSfx();
-
-    let elems = document.getElementsByClassName("tabcontent");
-    let i;
-    for (i = 0; i < elems.length; i++) {
-        elems[i].style.display = 'none';
-    }
-    document.getElementById(tab_content).style.display = 'block';
-
-    elems = document.getElementsByClassName("tabmenu");
-    for (i = 0; i < elems.length; i++) {
+const switchTab = function(list_id) {
+    const elems = document.getElementsByClassName("tabmenu");
+    for (let i = 0; i < elems.length; i++) {
         elems[i].removeAttribute('aria-selected');
+        if (elems[i].getAttribute('data-list_id') === list_id) {
+            elems[i].setAttribute('aria-selected', 'true');
+        }
     }
-
-    const activeTab = document.getElementById(tab_id);
-    activeTab.setAttribute('aria-selected', 'true');
-    ajaxPost(encodeURI('activeListID=' + activeTab.dataset.list_id));
 };
 
+const loadRouting = function(url, callback) {
+    const script = document.createElement("script");
+    script.src = url;
+    document.body.appendChild(script);
+    script.onreadystatechange = callback;
+    script.onload = callback;
+};
 
-(function() {
+const initRouting = function() {
+    const tabLinks = document.querySelectorAll('.tabmenu');
+    const qs = '?lid=';
+    let routes = [];
+    for (let i = 1; i < (tabLinks.length+1); i++) {
+        routes.push(new Route( String(i), qs+String(i), (i===1) ));
+    }
+    new Router(routes);
+};
+
+const addGridEvents = function() {
     const gridTops = document.querySelectorAll('.cards-100-top');
 
     gridTops.forEach(function(gridTop){
@@ -329,12 +340,24 @@ const switchTab = function(tab_id, tab_content) {
         panels.forEach(function(panel){
             panelSmarts(panel, gridBody.dataset.id);
         });
-    });
 
+        // ensure selected tab is the same as the currently loaded list
+        switchTab(gridBody.dataset.id);
+
+        setTimeout(function() {
+            gridBody.classList.remove('hide');
+            waitAnim.classList.add('hide');
+        }, 500);
+    });
+};
+
+
+(function() {
     const tabLinks = document.querySelectorAll('.tabmenu');
     tabLinks.forEach(function(tab){
         tab.addEventListener("click", function() {
-            switchTab(this.getAttribute('id'), this.getAttribute('data-id'));
+            playBtnSfx();
+            switchTab(this.getAttribute('data-list_id'));
             document.getElementById('foot-criteria').textContent = this.getAttribute('data-foot_criteria');
             const footLogoClass = this.getAttribute('data-list_type') === 'books' ? 'google-books' : 'themoviedb';
             document.getElementById('foot-logo').setAttribute('class',footLogoClass+'-logo');
@@ -371,13 +394,7 @@ const switchTab = function(tab_id, tab_content) {
         soundbox.load('pickup7b',   path+'Pickup_Coin7b.mp3').then(function(evt){ });
         soundbox.load('comp11',     path+'STcomp011.wav').then(function(evt){ });
         soundbox.load('comp12',     path+'STcomp012.wav').then(function(evt){ });
-
-        gridTops.forEach(function(gridTop){
-            const gridBody = gridTop.nextElementSibling; // .cards-100-gallery
-            gridBody.classList.remove('hide');
-
-            const waitAnim = gridTop.querySelector('.waiting');
-            waitAnim.classList.add('hide');
-        });
     });
+
+    loadRouting('./js/routing.min.js', initRouting);
 })();

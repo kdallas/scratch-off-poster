@@ -139,12 +139,25 @@ body {
     background-color: #f2f2f2;
     justify-content: space-between;
     .item-no {
-        color: #999;
+        color: white;
         font-weight: bold;
         font-size: 14px;
-        white-space: nowrap;
+        background-color: #777;
+        border-radius: 50%;
+        padding: 0 4px;
+        line-height: 0;
+        display: flex;
+        align-items: center;
+        min-width: 21px;
+        justify-content: center;
     }
     .controls {
+        display: flex;
+        justify-content: space-evenly;
+        width: 85%;
+        > .icon {
+            font-size: 20px;
+        }
         .icon-neutral {
             color: #999;
         }
@@ -168,6 +181,21 @@ body {
             color: #129900;
             &:hover {
                 color: #00cc00;
+            }
+        }
+    }
+}
+
+.card.split {
+    .card-divider {
+        .item-no {
+            display: inline-block;
+            color: #777;
+        }
+        .controls {
+            display: block;
+            > .icon {
+                font-size: 16px;
             }
         }
     }
