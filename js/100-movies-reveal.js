@@ -405,7 +405,7 @@ const isOverflown = function(element) {
     }
 
     window.addEventListener("resize", function() {
-        if (isOverflown(tabs)) {
+        if (isOverflown(tabs) || screen.width < 550) {
             tabs.classList.add('show-menu-btn');
         } else {
             tabs.classList.remove('show-menu-btn');
