@@ -400,7 +400,7 @@ const isOverflown = function(element) {
     });
 
     const tabs = document.querySelector('.tabs');
-    if (isOverflown(tabs)) {
+    if (isOverflown(tabs) || screen.width < 550) {
         tabs.classList.add('show-menu-btn');
     }
 
