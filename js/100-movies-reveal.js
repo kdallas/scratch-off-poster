@@ -351,6 +351,9 @@ const addGridEvents = function() {
     });
 };
 
+const isOverflown = function(element) {
+    return element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth;
+};
 
 (function() {
     const tabLinks = document.querySelectorAll('.tabmenu');
@@ -394,6 +397,29 @@ const addGridEvents = function() {
         soundbox.load('pickup7b',   path+'Pickup_Coin7b.mp3').then(function(evt){ });
         soundbox.load('comp11',     path+'STcomp011.wav').then(function(evt){ });
         soundbox.load('comp12',     path+'STcomp012.wav').then(function(evt){ });
+    });
+
+    const tabs = document.querySelector('.tabs');
+    if (isOverflown(tabs)) {
+        tabs.classList.add('show-menu-btn');
+    }
+
+    window.addEventListener("resize", function() {
+        if (isOverflown(tabs)) {
+            tabs.classList.add('show-menu-btn');
+        } else {
+            tabs.classList.remove('show-menu-btn');
+            tabs.classList.remove('show-menu-items');
+        }
+    });
+
+    const menuBtn = document.querySelector('.icon-menu');
+    menuBtn.addEventListener("click", function() {
+        if (tabs.classList.contains('show-menu-items')) {
+            tabs.classList.remove('show-menu-items');
+        } else {
+            tabs.classList.add('show-menu-items');
+        }
     });
 
     loadRouting('./js/routing.min.js', initRouting);

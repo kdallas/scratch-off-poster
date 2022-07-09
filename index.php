@@ -171,8 +171,11 @@ if ($listID) {
     <div class="master-container">
         <div id="menu-tabs">
             <ul class="tabs">
+                <li class="tabs-title menu-btn">
+                    <span class="icon icon-menu"></span>
+                </li>
                 <?php foreach ($posterList->lists as $listRow): ?>
-                    <li class="tabs-title">
+                    <li class="tabs-title menu-item">
                         <a href="#<?=$listRow["id"]?>" id="tb_<?=$listRow["tabLabel"]?>"
                            data-id="content_<?=$listRow["tabLabel"]?>"
                            data-list_id="<?=$listRow["id"]?>"
@@ -181,16 +184,10 @@ if ($listID) {
                            class="tabmenu"<?=($listRow["selected"] ? ' aria-selected="true"' :'')?>><?=$listRow["listName"]?></a>
                     </li>
                 <?php endforeach; ?>
-                <!--
-                <li class="header-controls">
-                    <h4><small><span id="mute-btn" class="icon icon-volume-<?=($_SESSION['sfxMuted'] ? 'mute2" title="Unm' : 'high" title="M')?>ute"></span></small></h4>
-                </li>
-                -->
             </ul>
             <div class="header-controls">
                 <h4><small><span id="mute-btn" class="icon icon-volume-<?=($_SESSION['sfxMuted'] ? 'mute2" title="Unm' : 'high" title="M')?>ute"></span></small></h4>
             </div>
-
         </div>
 
         <div id="app" class="tabcontent"></div>

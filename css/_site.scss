@@ -11,7 +11,7 @@ body {
         position: fixed;
         top: 0;
         width: 100%;
-        padding: 0 10px;
+        padding: 0 60px 0 10px;
         left: 0;
         z-index: 1;
 
@@ -22,60 +22,78 @@ body {
             margin-bottom: 10px;
             border: none;
 
-            overflow-x: hidden;
             height: 52px;
             display: inline-block;
+            white-space: nowrap;
+            overflow: hidden;
 
-            .tabs-title:first-child {
-                a {
-                    border-bottom-left-radius: 5px;
+            .tabs-title {
+                background-color: white;
+                &:first-child {
+                    a {
+                        border-bottom-left-radius: 5px;
+                    }
                 }
-            }
-            .tabs-title:last-child {
-                a {
-                    border-bottom-right-radius: 5px;
+                &:last-child {
+                    a {
+                        border-bottom-right-radius: 5px;
+                    }
                 }
-            }
-
-            /*
-            .header-controls {
-                float: right;
-                margin-right: 10px;
-                #mute-btn {
-                    color: #1779ba;
-                    transition: color 0.25s ease-out;
-                    cursor: pointer;
-                    &:hover {
-                        color: #14679e;
+                &.menu-btn {
+                    > .icon-menu {
+                        color: #1779ba;
+                        font-size: 26px;
+                        padding: 12px;
+                        display: none;
                     }
                 }
             }
-            */
 
+            &.show-menu-btn {
+                overflow: unset;
+                box-shadow: none;
+                .tabs-title {
+                    float: none;
+                    box-shadow: 0 3px 6px rgb(0 0 0 / 32%), 0 3px 6px rgb(0 0 0 / 32%);
+                    &.menu-item {
+                        display: none;
+                    }
+                    &.menu-btn {
+                        > .icon-menu {
+                            display: table-cell;
+                        }
+                    }
+                }
+            }
+
+            &.show-menu-items {
+                .tabs-title {
+                    &.menu-item {
+                        display: list-item;
+                    }
+                }
+            }
         }
-
 
         .header-controls {
             position: absolute;
             top: 5px;
-            right: 10px;
+            right: 15px;
             #mute-btn {
                 font-size: 25px;
                 color: #1779ba;
                 transition: color 0.25s ease-out;
                 cursor: pointer;
-
                 background-color: #f1f1f1;
                 border-radius: 50%;
                 padding: 5px;
-
+                min-width: 37px;
+                display: inline-block;
                 &:hover {
                     color: #14679e;
                 }
             }
         }
-
-
     }
 
     .tabcontent {
