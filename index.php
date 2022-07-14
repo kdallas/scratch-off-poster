@@ -131,7 +131,7 @@ if ($listID) {
                                 $posterList->displayCardInner($itemNos, $item);
                             } else {
                                 // normal card
-                                echo '<div class="card">';
+                                echo '<div class="card shine">';
                                 $posterList->displayCardInner($item["no"], [$item]);
                             }
                             echo '</div>';

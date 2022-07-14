@@ -90,7 +90,7 @@ class BookList extends MovieList
 
 		if (count($data) == 1) {
 			foreach ($data as $subItem) {
-				echo '<div class="img" data-no="'.$subItem["no"].'" data-watched="'.$subItem["watched"].'">';
+				echo '<div class="img shineOver" data-no="'.$subItem["no"].'" data-watched="'.$subItem["watched"].'">';
 
 				$imgPath = 'assets/img/cache/'.urlencode($subItem["volume_id"]).'.png';
 				// due to issues with CORS to Google Books API, it is far easier to "cache" the images first, rather than dynamically create canvasses from them

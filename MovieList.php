@@ -452,7 +452,7 @@ class MovieList
 
 	private function displayCardImg(&$subItem, $multi=false)
 	{
-		echo '<div class="'.($multi ? 'multi-' : '').'img" data-no="'.$subItem["no"].'" data-watched="'.$subItem["watched"].'">';
+		echo '<div class="'.($multi ? 'multi-' : '').'img shineOver" data-no="'.$subItem["no"].'" data-watched="'.$subItem["watched"].'">';
 		$imgPath = 'assets/img/cache'.$subItem["poster_path"];
 		// although not strictly necessary to cache the thumbnails (i.e. TMDB is fast) - this will perform better under SPA circumstances
 		if (!file_exists($imgPath)) {
