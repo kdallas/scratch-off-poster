@@ -182,7 +182,7 @@ if ($listID) {
                            data-list_id="<?=$listRow["id"]?>"
                            data-list_type="<?=$listRow["listType"]?>"
                            data-foot_criteria="<?=$listRow["listCriteria"]?>"
-                           class="tabmenu"<?=($listRow["selected"] ? ' aria-selected="true"' :'')?>><?=$listRow["listName"]?></a>
+                           class="tabmenu" role="option"<?=($listRow["selected"] ? ' aria-selected="true"' :'')?>><?=$listRow["listName"]?></a>
                     </li>
                 <?php endforeach; ?>
             </ul>
