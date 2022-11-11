@@ -79,7 +79,7 @@ body {
             position: absolute;
             top: 5px;
             right: 15px;
-            #mute-btn {
+            #mute-btn, #cancel-btn {
                 font-size: 25px;
                 color: #1779ba;
                 transition: color 0.25s ease-out;
@@ -89,6 +89,7 @@ body {
                 padding: 5px;
                 min-width: 37px;
                 display: inline-block;
+                text-align: center;
                 &:hover {
                     color: #14679e;
                 }
@@ -175,6 +176,15 @@ body {
                 }
             }
         }
+    }
+
+    > canvas.fireworks {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background-color: rgba(0,0,0,0.4);
     }
 }
 

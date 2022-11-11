@@ -187,6 +187,7 @@ if ($listID) {
             </ul>
             <div class="header-controls">
                 <h4><small><span id="mute-btn" class="icon icon-volume-<?=($_SESSION['sfxMuted'] ? 'mute2" title="Unm' : 'high" title="M')?>ute"></span></small></h4>
+                <h4><small><span id="cancel-btn" class="icon icon-cancel-circle hide" title="Cancel Fireworks"></span></small></h4>
             </div>
         </div>
 
@@ -203,6 +204,7 @@ if ($listID) {
     </div>
 
     <script src="./js/soundbox.min.js"></script>
+    <script src="./js/fireworks-js_v1.4.1.js"></script>
     <script src="./js/100-movies-reveal.min.js?v=06"></script>
 </body>
 </html>
