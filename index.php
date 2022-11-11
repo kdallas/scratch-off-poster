@@ -146,6 +146,7 @@ if ($listID) {
         }
     }
 } else {
+$description = 'Scratch-off Movie & Book Posters - How many can you scratch off?';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -155,7 +156,7 @@ if ($listID) {
     <title>100 Movies Bucket List Scratch off Poster - How many can you scratch off?</title>
     <meta property="og:url" content="https://www.weblabsperth.com.au/100-movies/" />
     <meta property="og:title" content="Scratch-off Posters | Web Labs Perth" />
-    <meta property="og:description" content="Scratch-off Movie & Book Posters - How many can you scratch off?"/>
+    <meta property="og:description" content="<?=$description?>" />
     <meta property="og:image" content="https://www.weblabsperth.com.au/100-movies/assets/img/100-movies-preview_r1a.png" />
     <meta property="og:image:width" content="398" />
     <meta property="og:image:height" content="208" />
@@ -166,6 +167,7 @@ if ($listID) {
     <link rel="preload" as="font" href="assets/font/IcoMoon-Free.woff2" type="font/woff2" crossorigin="anonymous" />
     <link href="./css/site.min.css?d=<?=date('Ymd')?>" rel="stylesheet" />
     <link href="assets/img/movie-play-button-icon_r1.png" rel="icon" type="image/png" />
+    <meta name="description" content="<?=$description?>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=6.0, user-scalable=yes" />
 </head>
 <body>
