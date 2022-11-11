@@ -7,3 +7,4 @@ assets/img.old
 assets/img/cache
 js/soundbox*
 vendor
+node_modules

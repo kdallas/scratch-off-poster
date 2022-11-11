@@ -13,7 +13,7 @@ const panelSmarts = function(panel, listID) {
         const pixels = panel.width * panel.height;
 
         let downTimer = 0;
-        const panelCtx = panel.getContext('2d');
+        const panelCtx = panel.getContext('2d', { willReadFrequently: true });
 
         panelCtx.drawImage(img, 0, 0, panel.width, panel.height);
         panelCtx.save();
@@ -149,9 +149,18 @@ const panelSmarts = function(panel, listID) {
                     movieWatched = 0;
                 }
 
-                const watchCount = panel.closest('.grid-container.full').querySelector('.watched');
+                const gridContainer = panel.closest('.grid-container.full');
+                const watchCount = gridContainer.querySelector('.watched');
+                const total = parseInt(gridContainer.querySelector('.total').textContent);
                 let no = parseInt(watchCount.textContent);
-                watchCount.textContent = String(movieWatched ? (no+1) : (no-1));
+                no = movieWatched ? no+1 : no-1;
+                watchCount.textContent = String(no);
+                if (no === total) {
+                    muteAudio();
+                    fireworksCanvas.classList.remove('hide');
+                    fireworks.start();
+                    cancelButton.classList.remove('hide');
+                }
             });
         }
 
@@ -281,12 +290,14 @@ const switchTab = function(list_id) {
     }
 };
 
-const loadRouting = function(url, callback) {
+const loadScript = function(url, callback) {
     const script = document.createElement("script");
     script.src = url;
     document.body.appendChild(script);
-    script.onreadystatechange = callback;
-    script.onload = callback;
+    if (callback) {
+        script.onreadystatechange = callback;
+        script.onload = callback;
+    }
 };
 
 const initRouting = function() {
@@ -355,6 +366,47 @@ const isOverflown = function(element) {
     return element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth;
 };
 
+const path = '/100-movies/assets/sound/';
+let fireworksCanvas, fireworks;
+
+const initFireworks = function() {
+    const container = document.querySelector('.master-container');
+    fireworks = new Fireworks(container, {
+        sound: {
+            enabled: false,
+            files: [ path+'explosion0.mp3', path+'explosion1.mp3', path+'explosion2.mp3' ]
+        },
+    });
+
+    fireworksCanvas = document.querySelector('.master-container > canvas');
+    fireworksCanvas.height = window.innerHeight;
+    fireworks.setSize();
+    fireworksCanvas.classList.add('fireworks');
+    fireworksCanvas.classList.add('hide');
+};
+
+const cancelButton = document.getElementById('cancel-btn');
+const muteButton = document.getElementById('mute-btn');
+
+const muteAudio = function() {
+    window.soundbox.stop_all();
+    sfxMuted = 1;
+    fireworks.setOptions({ sound: { enabled: false } });
+    muteButton.classList.remove('icon-volume-high');
+    muteButton.classList.add('icon-volume-mute2');
+    muteButton.title = 'Unmute';
+};
+
+const enableAudio = function() {
+    sfxMuted = 0;
+    fireworks.setOptions({ sound: { enabled: true } });
+    playBtnSfx();
+    muteButton.classList.remove('icon-volume-mute2');
+    muteButton.classList.add('icon-volume-high');
+    muteButton.title = 'Mute';
+};
+
+
 (function() {
     const tabLinks = document.querySelectorAll('.tabmenu');
     tabLinks.forEach(function(tab){
@@ -367,30 +419,26 @@ const isOverflown = function(element) {
         });
     });
 
-    const muteButton = document.getElementById('mute-btn');
     if (muteButton.classList.contains('icon-volume-mute2')) {
         sfxMuted = true;
     }
 
     muteButton.addEventListener("click", function() {
         if (muteButton.classList.contains('icon-volume-high')) {
-            window.soundbox.stop_all();
-            sfxMuted = 1;
-            muteButton.classList.remove('icon-volume-high');
-            muteButton.classList.add('icon-volume-mute2');
-            muteButton.title = 'Unmute';
+            muteAudio();
         } else {
-            sfxMuted = 0;
-            playBtnSfx();
-            muteButton.classList.remove('icon-volume-mute2');
-            muteButton.classList.add('icon-volume-high');
-            muteButton.title = 'Mute';
+            enableAudio();
         }
         ajaxPost(encodeURI('muteSfx=' + sfxMuted));
     });
 
+    cancelButton.addEventListener("click", function() {
+        cancelButton.classList.add('hide');
+        fireworks.stop();
+        fireworksCanvas.classList.add('hide');
+    });
+
     window.addEventListener("load", function() {
-        const path = '/100-movies/assets/sound/';
         window.soundbox = new SoundBox();
         soundbox.load('scratching', path+'Scratching-Paper.mp3').then(function(evt){ });
         soundbox.load('pickup7a',   path+'Pickup_Coin7a.mp3').then(function(evt){ });
@@ -422,5 +470,6 @@ const isOverflown = function(element) {
         }
     });
 
-    loadRouting('./js/routing.min.js', initRouting);
+    loadScript('./js/routing.min.js', initRouting);
+    loadScript('./js/fireworks-js_v1.4.1.js', initFireworks);
 })();
