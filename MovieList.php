@@ -458,7 +458,7 @@ class MovieList
 		if (!file_exists($imgPath)) {
 			copy('https://image.tmdb.org/t/p/w185'.$subItem["poster_path"], $imgPath);
 		}
-		echo '<img src="'.$imgPath.'" />';
+		echo '<img src="'.$imgPath.'" alt="" />';
 
 		echo '<canvas'.($subItem["watched"] ? ' class="hide"' : '').'></canvas>';
 		echo '</div>';

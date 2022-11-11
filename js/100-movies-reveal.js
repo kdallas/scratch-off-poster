@@ -2,15 +2,19 @@ let sfxMuted = false;
 
 const panelSmarts = function(panel, listID) {
     const imgPanel = panel.parentElement;
+    const imgOriginal = imgPanel.querySelector('img');
     let img = new Image();
     img.addEventListener('load', imgOnLoad);
     img.crossOrigin = "Anonymous";
-    img.src = imgPanel.querySelector('img').src;
+    img.src = imgOriginal.src;
 
     function imgOnLoad() {
         panel.width = img.width;
         panel.height = img.height;
         const pixels = panel.width * panel.height;
+
+        imgOriginal.setAttribute('width', String(panel.width));
+        imgOriginal.setAttribute('height', String(panel.height));
 
         let downTimer = 0;
         const panelCtx = panel.getContext('2d', { willReadFrequently: true });

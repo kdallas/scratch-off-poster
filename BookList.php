@@ -97,7 +97,7 @@ class BookList extends MovieList
 				if (!file_exists($imgPath)) {
 					copy('https://books.google.com/books/content?id='.$subItem["volume_id"].'&printsec=frontcover&img=1&zoom=1&key='.GOOGLE_BOOKS_API_KEY, $imgPath);
 				}
-				echo '<img src="'.$imgPath.'" />';
+				echo '<img src="'.$imgPath.'" alt="" />';
 
 				$watchedClass = $subItem["watched"] ? ' class="hide"' : '';
 				echo '<canvas'.$watchedClass.'></canvas>';

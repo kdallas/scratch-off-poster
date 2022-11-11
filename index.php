@@ -86,7 +86,7 @@ if ($listID) {
                     <?php if($listRow["id"]==1): ?>
                         <div class="cell medium-4 large-4 medium-offset-2 large-offset-2">
                             <div class="callout">
-                                <h5>Attribution and inspiration...</h5>
+                                <h3>Attribution and inspiration...</h3>
                                 <ul>
                                     <li><a href="https://www.listchallenges.com/100-movies-bucket-list-scratch-off-poster" target="_blank">"100 Movies Bucket List Scratch off Poster"</a> on List Challenges by <a href="https://www.listchallenges.com/profile/272412">shyguy</a></li>
                                     <li><a href="https://codepen.io/dudleystorey/pen/yJQxLX" target="_blank">Scratch Reveal with <?=htmlspecialchars('<canvas>')?></a> by <a href="https://codepen.io/dudleystorey" target="_blank">Dudley Storey</a></li>
@@ -166,23 +166,23 @@ if ($listID) {
     <link rel="preload" as="font" href="assets/font/IcoMoon-Free.woff2" type="font/woff2" crossorigin="anonymous" />
     <link href="./css/site.min.css?d=<?=date('Ymd')?>" rel="stylesheet" />
     <link href="assets/img/movie-play-button-icon_r1.png" rel="icon" type="image/png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=6.0, user-scalable=yes" />
 </head>
 <body>
     <div class="master-container">
         <div id="menu-tabs">
-            <ul class="tabs">
-                <li class="tabs-title menu-btn">
+            <ul class="tabs" role="tablist">
+                <li class="tabs-title menu-btn" role="presentation">
                     <span class="icon icon-menu"></span>
                 </li>
                 <?php foreach ($posterList->lists as $listRow): ?>
-                    <li class="tabs-title menu-item">
+                    <li class="tabs-title menu-item" role="presentation">
                         <a href="#<?=$listRow["id"]?>" id="tb_<?=$listRow["tabLabel"]?>"
                            data-id="content_<?=$listRow["tabLabel"]?>"
                            data-list_id="<?=$listRow["id"]?>"
                            data-list_type="<?=$listRow["listType"]?>"
                            data-foot_criteria="<?=$listRow["listCriteria"]?>"
-                           class="tabmenu" role="option"<?=($listRow["selected"] ? ' aria-selected="true"' :'')?>><?=$listRow["listName"]?></a>
+                           class="tabmenu" role="tab"<?=($listRow["selected"] ? ' aria-selected="true"' :'')?>><?=$listRow["listName"]?></a>
                     </li>
                 <?php endforeach; ?>
             </ul>
