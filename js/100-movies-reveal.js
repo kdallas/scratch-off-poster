@@ -60,7 +60,7 @@ const panelSmarts = function(panel, listID) {
             }
         }, false);
 
-        panel.addEventListener("touchstart", scratchingStarted);
+        panel.addEventListener("touchstart", scratchingStarted, { passive: true });
         panel.addEventListener("touchend", scratchingEnded);
 
         panel.addEventListener("touchmove", function(e) {
@@ -70,7 +70,7 @@ const panelSmarts = function(panel, listID) {
                 const brushPos = getBrushPos(touch.clientX, touch.clientY);
                 drawDot(brushPos.x, brushPos.y);
             }
-        }, false);
+        }, { passive: true });
 
 
         function scratchingStarted()

@@ -163,6 +163,7 @@ if ($listID) {
     <meta property="fb:admins" content="810832242" />
     <meta itemprop="name" content="Scratch-off Posters | Web Labs Perth" />
     <meta itemprop="image" content="https://www.weblabsperth.com.au/100-movies/assets/img/100-movies-preview_r1a.png" />
+    <link rel="preload" as="font" href="assets/font/IcoMoon-Free.woff2" type="font/woff2" crossorigin="anonymous" />
     <link href="./css/site.min.css?d=<?=date('Ymd')?>" rel="stylesheet" />
     <link href="assets/img/movie-play-button-icon_r1.png" rel="icon" type="image/png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
