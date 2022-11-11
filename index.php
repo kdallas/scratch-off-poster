@@ -204,8 +204,7 @@ if ($listID) {
     </div>
 
     <script src="./js/soundbox.min.js"></script>
-    <script src="./js/fireworks-js_v1.4.1.js"></script>
-    <script src="./js/100-movies-reveal.min.js?v=06"></script>
+    <script src="./js/100-movies-reveal.min.js?v=07"></script>
 </body>
 </html>
 

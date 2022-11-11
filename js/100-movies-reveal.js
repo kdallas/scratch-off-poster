@@ -290,12 +290,14 @@ const switchTab = function(list_id) {
     }
 };
 
-const loadRouting = function(url, callback) {
+const loadScript = function(url, callback) {
     const script = document.createElement("script");
     script.src = url;
     document.body.appendChild(script);
-    script.onreadystatechange = callback;
-    script.onload = callback;
+    if (callback) {
+        script.onreadystatechange = callback;
+        script.onload = callback;
+    }
 };
 
 const initRouting = function() {
@@ -365,15 +367,23 @@ const isOverflown = function(element) {
 };
 
 const path = '/100-movies/assets/sound/';
-const container = document.querySelector('.master-container');
-let fireworksCanvas;
+let fireworksCanvas, fireworks;
 
-const fireworks = new Fireworks(container, {
-    sound: {
-        enabled: false,
-        files: [ path+'explosion0.mp3', path+'explosion1.mp3', path+'explosion2.mp3' ]
-    },
-});
+const initFireworks = function() {
+    const container = document.querySelector('.master-container');
+    fireworks = new Fireworks(container, {
+        sound: {
+            enabled: false,
+            files: [ path+'explosion0.mp3', path+'explosion1.mp3', path+'explosion2.mp3' ]
+        },
+    });
+
+    fireworksCanvas = document.querySelector('.master-container > canvas');
+    fireworksCanvas.height = window.innerHeight;
+    fireworks.setSize();
+    fireworksCanvas.classList.add('fireworks');
+    fireworksCanvas.classList.add('hide');
+};
 
 const cancelButton = document.getElementById('cancel-btn');
 const muteButton = document.getElementById('mute-btn');
@@ -460,11 +470,6 @@ const enableAudio = function() {
         }
     });
 
-    fireworksCanvas = document.querySelector('.master-container > canvas');
-    fireworksCanvas.height = window.innerHeight;
-    fireworks.setSize();
-    fireworksCanvas.classList.add('fireworks');
-    fireworksCanvas.classList.add('hide');
-
-    loadRouting('./js/routing.min.js', initRouting);
+    loadScript('./js/routing.min.js', initRouting);
+    loadScript('./js/fireworks-js_v1.4.1.js', initFireworks);
 })();
