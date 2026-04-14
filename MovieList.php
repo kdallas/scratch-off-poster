@@ -255,12 +255,12 @@ class MovieList
 		return "INSERT INTO `$table` (`$columns`) VALUES ('$values')";
 	}
 
-	public function getMovieRec($tmdb_id)
+	public function getMovieRec($tmdb_id, $fetch_obj = false)
 	{
 		$row = [];
 		$result = $this->dbConn->query("SELECT * FROM `movie_list` WHERE tmdb_id = $tmdb_id LIMIT 1");
 		if ($result->num_rows) {
-			$row = $result->fetch_assoc();
+            $row = $fetch_obj ? $result->fetch_object() : $result->fetch_assoc();
 		}
 		unset($result);
 		return $row;

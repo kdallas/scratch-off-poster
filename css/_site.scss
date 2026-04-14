@@ -106,6 +106,15 @@ body {
         background-color: #fff;
         margin: 5px 0 10px;
         border-radius: 4px;
+        input {
+            font-size: 14px;
+            border: 1px solid #ddd;
+            &[name="search"] {
+                line-height: 1.8;
+                padding: 0 8px;
+                width: 25%;
+            }
+        }
         h2, h4 {
             small {
                 color: #333;
@@ -122,10 +131,10 @@ body {
             }
             > .userCode {
                 input {
+                    font-size: 1.5625rem;
                     width: 80px;
                     text-align: center;
                     color: green;
-                    border: 1px solid #ddd;
                 }
             }
             .button {

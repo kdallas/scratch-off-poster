@@ -1,0 +1,10 @@
+{
+  "name": "100-movies",
+  "version": "1.0.0",
+  "dependencies": {
+    "@fireworks-js/web": "^2.8.0"
+  },
+  "devDependencies": {
+    "fireworks-js": "^2.8.0"
+  }
+}
